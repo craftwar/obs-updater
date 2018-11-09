@@ -328,3 +328,8 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+
+craftwar.obs_updater/*.exe
+craftwar.obs_updater/*.zip
+craftwar.obs_updater/update/
