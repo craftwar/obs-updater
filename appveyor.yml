@@ -1,0 +1,40 @@
+version: '{build}'
+skip_tags: true
+image: Visual Studio 2017
+init:
+  - ps: if (0) { iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1')) } #rdp debug
+environment:
+  SEVENZIP_VERSION: 1805
+#  CURL_VERSION: 7.62.0
+ 
+build_script:
+  - if exist 7z%SEVENZIP_VERSION%-extra.7z (curl -kLO https://www.7-zip.org/a/7z%SEVENZIP_VERSION%-extra.7z -f --retry 5 -z 7z%SEVENZIP_VERSION%-extra.7z) else (curl -kLO https://www.7-zip.org/a/7z%SEVENZIP_VERSION%-extra.7z -f --retry 5 -C -)
+  - 7z x 7z%SEVENZIP_VERSION%-extra.7z -o7z-extra
+  - cd craftwar.obs_updater
+  - 7z a "%APPVEYOR_BUILD_FOLDER%\craftwar.obs_updater.zip" -mx=9 -mpass=15 -mcu=on *.* "%APPVEYOR_BUILD_FOLDER%\7z-extra\x64\7za.exe" C:\Tools\curl\bin\curl.exe -x!0_createZip.cmd -x!obs-studio.ico
+  - cd ..
+artifacts:
+- path: craftwar.obs_updater.zip
+
+deploy:
+  - provider: GitHub
+    tag: git
+#    description: $(APPVEYOR_REPO_COMMIT)
+    auth_token:
+      secure: KxeGOEgx0+XWdjLWDsyhC+B/w3m8zpvtVY/e+90lCLZgd/2VSuraPZDxdIPB5rfY
+    force_update: true
+    on:
+      branch: master
+
+test: off
+
+cache:
+  - '7z%SEVENZIP_VERSION%-extra.7z'
+
+#notifications:
+#  - provider: Webhook
+#    url:
+#      secure: k1kpaz4CB5Rg5a3MTb4XKnd76fJ+9ozz5RACVnNjdgmAjA1OSssZ6LZ3g0NGfzc/
+#    headers:
+#      Authorization:
+#        secure: A0PBwpHtsYzBOuye1EeS0fl562T0NZEInwZp0ZVER1wLQSeE6gzWGrRo2a0E7hii
