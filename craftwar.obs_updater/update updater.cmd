@@ -30,7 +30,7 @@ if "%1" EQU "move" (
 	)
 )
 
-set file_url=https://github.com/craftwar/obs-studio/releases/download/git/craftwar.obs_updater.zip
+set file_url=https://github.com/craftwar/obs-updater/releases/download/git/craftwar.obs_updater.zip
 set file=craftwar.obs_updater.zip
 set file-new=%file%-new
 set _7z=7za.exe
