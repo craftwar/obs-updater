@@ -1,5 +1,5 @@
 @echo off
-cd /d %~dp0
+cd /d "%~dp0"
 set file_url=https://github.com/craftwar/obs-studio/releases/download/git/obs-text-blend.dll
 set file=obs-plugins\64bit\obs-text.dll
 if exist obs-plugins (

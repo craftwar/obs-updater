@@ -3,7 +3,7 @@ setlocal
 set cdn_root=https://cdn-fastly.obsproject.com/update_studio
 set gc_dir=data/obs-plugins/win-capture
 set cdn_gc_url=%cdn_root%/core/%gc_dir%
-set curl_bin=%~dp0\curl
+set curl_bin="%~dp0\curl"
 
 pushd data\obs-plugins\win-capture\
 

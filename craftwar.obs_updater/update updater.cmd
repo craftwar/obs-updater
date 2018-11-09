@@ -1,7 +1,7 @@
 @rem 7zip doesn't support extract some formats (7z...etc) from pipe yet
 @rem curl -skL https://zlib.net/zlib1211.zip -f --retry 5 -C - | "C:\Program Files\7-Zip\7z.exe" x -si
 @echo off
-cd /d %~dp0
+cd /d "%~dp0"
 
 :: run in update
 if "%1" EQU "move" (
