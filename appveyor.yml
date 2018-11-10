@@ -14,12 +14,12 @@ build_script:
   - mklink /H 7za.exe "%APPVEYOR_BUILD_FOLDER%\7z-extra\x64\7za.exe"
   - mklink /H curl.exe C:\Tools\curl\bin\curl.exe
   - 7z a "%APPVEYOR_BUILD_FOLDER%\craftwar.obs_updater.zip" -mx=9 -mpass=15 -mcu=on *.* -x!0_createZip.cmd -x!obs-studio.ico
-  - call ..\installer\set-vc-ver.cmd
-  - makensis /NOCD /NOCONFIG /DVC_redist_ver=%VC_redist_ver% ..\installer\installer.nsi
   - cd ..
-  - ps: Push-AppveyorArtifact "craftwar.obs_updater\craftwar OBS installer.exe" -FileName "craftwar OBS installer.exe"
+  - call installer\set-vc-ver.cmd
+  - makensis /NOCD /NOCONFIG /INPUTCHARSET UTF8 /DVC_redist_ver=%VC_redist_ver% installer\installer.nsi
 artifacts:
 - path: craftwar.obs_updater.zip
+- path: 'craftwar OBS installer.exe'
 
 deploy:
   - provider: GitHub

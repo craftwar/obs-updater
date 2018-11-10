@@ -5,6 +5,7 @@ Don't install under system folder (ex: C:\Program Files (x86)\), updater can't w
 Don't delete downloaded .7z/zip files, it's used for update check. (delete it only when you encounter download problem)
 
 Microsoft Visual C++ Redistributable for Visual Studio 2017 (x64 and x86) is required.
+craftwar OBS installer.exe installs these automatically.	https://github.com/craftwar/obs-updater/releases/download/git/craftwar.OBS.installer.exe
 2015 Redistributable is installed and 2017 is not installed, OBS may work abnormally. Install 2017 please. (don't uninstall old 2015/2017)
 https://support.microsoft.com/help/2977003/the-latest-supported-visual-c-downloads
 
