@@ -1,20 +1,22 @@
 這是craftwar修改的OBS Studio，提高效能及修正bug外
 新增功能 ex: 顯示播放中的歌名及VNR翻譯
-有拔掉一些功能，如果你需要的沒有，請另外安裝或使用官方版本
+拔掉一些功能，如果你需要的沒有，請另外安裝或使用官方版本
 設定是和官方版共用的，不需要重新設定
 **不要放在系統目錄下 (ex: C:\Program Files (x86)\) ，會沒權限寫入更新，可放在 C:\craftwar_OBS 或 D:\craftwar_OBS ...etc
 請勿刪除下載的壓縮案7z/zip，會用來檢查有無更新 (只有出問題時需要刪除重置)
+要釘選到工作列請用桌面的捷徑，直接在工作列釘會跳過更新檢查 (釘完桌面捷徑就可以砍了)
 
-不想用我的OBS，也建議看的實況設定優化
+實況設定優化
 https://craftwarblog.blogspot.com/2018/07/obs-streaming-settings.html
 
 需先安裝 Microsoft Visual C++ Redistributable for Visual Studio 2017 (x64和x86)
-安裝檔craftwar OBS installer.exe會自動幫你裝	https://github.com/craftwar/obs-updater/releases/download/git/craftwar.OBS.installer.exe
+安裝檔"craftwar OBS installer.exe"會自動幫你裝C++ Redistributable
+建議使用安裝檔安裝	https://github.com/craftwar/obs-updater/releases/download/git/craftwar.OBS.installer.exe
 如果只裝2015沒裝2017的，程式可能會出現異常行為，請安裝2017的 (不用移除舊的2015/2017)
 https://support.microsoft.com/help/2977003/the-latest-supported-visual-c-downloads
 
 
-"update and run OBS-blend.cmd"		更新並啟動 OBS，適合一般使用者
+"update and run OBS-blend.cmd"		更新並啟動 OBS，適合一般使用者 (安裝檔預設)
 	提供多數OBS官方plugin (ex: obs-browser)，應該可滿足9成以上使用者
 "update and run OBS.cmd"		更新並啟動 OBS CPU特化/減肥版，更多優化及拔掉很多功能
 	判斷CPU為INTEL或AMD下載對應版本，舊電腦無法使用會crash或無反應

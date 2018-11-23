@@ -1,15 +1,17 @@
 This is craftwar's customized OBS Studio. (improve performance, added features ex: display playing song, VNR translation)
 I remove some plugins. You need more features, you need install them yourself or use official OBS Studio version instead.
-It share the same settings with official OBS, no extra setup.
+It shares the same settings with official OBS, no extra setup is required.
 Don't install under system folder (ex: C:\Program Files (x86)\), updater can't write. Install in C:\craftwar_OBS or D:\craftwar_OBS ...etc
 Don't delete downloaded .7z/zip files, it's used for update check. (delete it only when you encounter download problem)
+If you wana pin OBS to taskbar, pin desktop shortcut to taskbar or it won't run updater. (desktop shortcut can be deleted)
 
 Microsoft Visual C++ Redistributable for Visual Studio 2017 (x64 and x86) is required.
-craftwar OBS installer.exe installs these automatically.	https://github.com/craftwar/obs-updater/releases/download/git/craftwar.OBS.installer.exe
+"craftwar OBS installer.exe" installs C++ Redistributable automatically.
+install by installer is recommended	https://github.com/craftwar/obs-updater/releases/download/git/craftwar.OBS.installer.exe
 2015 Redistributable is installed and 2017 is not installed, OBS may work abnormally. Install 2017 please. (don't uninstall old 2015/2017)
 https://support.microsoft.com/help/2977003/the-latest-supported-visual-c-downloads
 
-"update and run OBS-blend.cmd"	to update and start OBS blend for general users
+"update and run OBS-blend.cmd"	to update and start OBS blend for general users (default in installer)
 	include most OBS plugins (ex: obs-browser), suitable for 90%+ usage
 "update and run OBS.cmd"	to update and start OBS CPU-specific/debloated version, more optimizations, most funtions is removed.
 	It detects INTEL/AMD CPU automatically and downloads CPU-specific version, crash or close on old computers
