@@ -15,7 +15,7 @@ build_script:
   - mklink /H curl.exe C:\Tools\curl\bin\curl.exe
   - 7z a "%APPVEYOR_BUILD_FOLDER%\craftwar.obs_updater.zip" -mx=9 -mpass=15 -mcu=on *.* -x!0_createZip.cmd -x!obs-studio.ico
   - cd ..
-  - call installer\set-vc-ver.cmd
+  - call installer\get-vc-ver.cmd
   - makensis /NOCD /NOCONFIG /INPUTCHARSET UTF8 /DVC_redist_ver=%VC_redist_ver% installer\installer.nsi
 artifacts:
 - path: craftwar.obs_updater.zip
