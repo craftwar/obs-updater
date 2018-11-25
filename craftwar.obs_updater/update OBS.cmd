@@ -1,8 +1,8 @@
 @echo off
 cd /d "%~dp0"
-call "internal or fewer usages\check_cpu.cmd"
 
 if NOT DEFINED file_url (
+	call "internal or fewer usages\check_cpu.cmd"
 	if DEFINED favor_arch (
 		set file_url=https://github.com/craftwar/obs-studio/releases/download/git/OBS-git-craftwar-%favor_arch%.7z
 	) 
@@ -15,6 +15,7 @@ set file-new=%file%-new
 set _7z=7za.exe
 ::set _7z_options=
 
+echo Trying to close OBS (game hooked game should be closed manually)
 taskkill /F /FI "WINDOWTITLE eq OBS *" /IM obs64.exe
 if exist %file% (
 	curl -kLo %file-new% %file_url% -f --retry 5 -z %file%
