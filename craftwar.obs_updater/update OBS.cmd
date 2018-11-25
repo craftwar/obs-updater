@@ -1,6 +1,6 @@
 @echo off
 cd /d "%~dp0"
-call check_cpu.cmd
+call "internal or fewer usages\check_cpu.cmd"
 
 if NOT DEFINED file_url (
 	if DEFINED favor_arch (
@@ -8,7 +8,7 @@ if NOT DEFINED file_url (
 	) 
 )
 if NOT DEFINED file (
-	set file=OBS-git-craftwar.7z
+	set file=OBS-git-craftwar-CPU.7z
 )
 
 set file-new=%file%-new

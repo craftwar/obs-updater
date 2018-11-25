@@ -17,8 +17,9 @@ if "%1" EQU "move" (
 	exit /B 0
 	pause
 	:completeMove
-	copy /Y *.* .. >NUL
-	del /Q *.*
+::	copy /Y *.* .. >NUL
+	xcopy /SY * .. >NULL
+	del /Q * "internal or fewer usages\*"
 	exit /B 0
 	pause
 ) else (

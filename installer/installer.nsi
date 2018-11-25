@@ -14,7 +14,7 @@ SetCompressor /SOLID LZMA
 
 Section "OBS Studio"
 	setOutPath $INSTDIR
-	File /x "${APPNAME} installer.exe" /x "*.zip" /x "0_createZip.cmd" craftwar.obs_updater\*.*
+	File /r /x "${APPNAME} installer.exe" /x "*.zip" /x "0_createZip.cmd" craftwar.obs_updater\*
 	File "${VC_redist_dir}\vc_redist.x86.exe"
 	File "${VC_redist_dir}\vc_redist.x64.exe"
 	ExecWait '"$INSTDIR\vc_redist.x86.exe"  /quiet /norestart'
