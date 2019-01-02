@@ -6,6 +6,8 @@ OutFile "${APPNAME} installer.exe"
 
 InstallDir "C:\${APPNAME}"
 
+;Page license
+;LicenseData LICENSE
 Page directory
 Page instfiles
 
