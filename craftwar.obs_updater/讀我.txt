@@ -43,11 +43,11 @@ http://craftwarblog.blogspot.com/2017/09/chatty-obs-by-craftwar.html
 下面的檔通常不會用到
 "internal or fewer usages" 目錄updater用的內部檔案或是極少需要用到的檔案
 
-"update updater.cmd"
-	更新updater (包含說明文件, 已改成會自動更新)
 
 下面未更新
 
+"update updater.cmd"
+	更新updater (包含說明文件, 已改成會自動更新)
 "update OBS.cmd"
 	更新OBS (會自動檢查是AMD或INTEL CPU，無法判定時請自己選)
 "extract OBS.cmd"

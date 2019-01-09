@@ -23,8 +23,6 @@ If you wana pin OBS to taskbar, pin desktop shortcut to taskbar or it won't run 
 	It detects INTEL/AMD CPU automatically and downloads CPU-specific version, crash or close on old computers
 "get obs-text.cmd"
 	download obs-text.dll only (put updater in OBS root directory)
-"get obs-text-CPU.cmd"
-	more optimized obs-text.dll (may not run on old computers)
 
 Updater updates craftwar's OBS studio only. (not including plugins you install)
 Share updater only, not OBS you get from updating. (CPU specific version is slower in incorrect CPU)
@@ -43,9 +41,12 @@ These files should not be used in most cases
 
 "update updater.cmd"
 	to update updater (including doc, change to auto update updater now)
+
+
 below docs are not updated
 
-
+"get obs-text-CPU.cmd"
+	more optimized obs-text.dll (may not run on old computers)
 "update OBS.cmd"
 	to update OBS (auto check AMD/CPU. Pick it manually if it can't detect)
 "extract OBS.cmd"
