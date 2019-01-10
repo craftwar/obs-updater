@@ -8,11 +8,13 @@ environment:
 #  CURL_VERSION: 7.62.0
  
 build_script:
-  - if exist 7z%SEVENZIP_VERSION%-extra.7z (curl -kLO https://www.7-zip.org/a/7z%SEVENZIP_VERSION%-extra.7z -f --retry 5 -z 7z%SEVENZIP_VERSION%-extra.7z) else (curl -kLO https://www.7-zip.org/a/7z%SEVENZIP_VERSION%-extra.7z -f --retry 5 -C -)
-  - 7z x 7z%SEVENZIP_VERSION%-extra.7z -o7z-extra
+#  - if exist 7z%SEVENZIP_VERSION%-extra.7z (curl -kLO https://www.7-zip.org/a/7z%SEVENZIP_VERSION%-extra.7z -f --retry 5 -z 7z%SEVENZIP_VERSION%-extra.7z) else (curl -kLO https://www.7-zip.org/a/7z%SEVENZIP_VERSION%-extra.7z -f --retry 5 -C -)
+#  - 7z x 7z%SEVENZIP_VERSION%-extra.7z -o7z-extra
   - cd craftwar.obs_updater
-  - mklink /H 7za.exe "%APPVEYOR_BUILD_FOLDER%\7z-extra\x64\7za.exe"
+#  - mklink /H 7za.exe "%APPVEYOR_BUILD_FOLDER%\7z-extra\x64\7za.exe"
   - mklink /H curl.exe C:\Tools\curl\bin\curl.exe
+  - mklink /H 7z.exe "C:\Program Files\7-Zip\7z.exe"
+  - mklink /H 7z.dll "C:\Program Files\7-Zip\7z.dll"
   - 7z a "%APPVEYOR_BUILD_FOLDER%\craftwar.obs_updater.zip" -mx=9 -mpass=15 -mcu=on * -x!0_createZip.cmd -x!obs-studio.ico
   - cd ..
   - call installer\get-vc-ver.cmd
@@ -33,8 +35,8 @@ deploy:
 
 test: off
 
-cache:
-  - '7z%SEVENZIP_VERSION%-extra.7z'
+#cache:
+#  - '7z%SEVENZIP_VERSION%-extra.7z'
 
 #notifications:
 #  - provider: Webhook

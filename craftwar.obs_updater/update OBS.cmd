@@ -12,7 +12,7 @@ if NOT DEFINED file (
 )
 
 set file-new=%file%-new
-set _7z=7za.exe
+set _7z=7z.exe
 ::set _7z_options=
 
 echo Trying to close OBS (game hooked game should be closed manually)
