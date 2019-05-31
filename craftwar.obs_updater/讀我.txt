@@ -10,8 +10,8 @@ https://craftwarblog.blogspot.com/2017/09/chatty-obs-by-craftwar.html
 實況設定優化
 https://craftwarblog.blogspot.com/2018/07/obs-streaming-settings.html
 
-需先安裝 Microsoft Visual C++ Redistributable for Visual Studio 2017 (x64和x86)
-如果只裝2015沒裝2017的，程式可能會出現異常行為，請安裝2017的 (不用移除舊的2015/2017)
+需先安裝 Microsoft Visual C++ Redistributable for Visual Studio 2019 (x64和x86)
+如果沒裝，程式可能會出現異常行為，請安裝2019的 (不用移除舊的Redistributable)
 https://support.microsoft.com/help/2977003/the-latest-supported-visual-c-downloads
 
 建議使用安裝檔安裝	https://github.com/craftwar/obs-updater/releases/download/git/craftwar.OBS.installer.exe

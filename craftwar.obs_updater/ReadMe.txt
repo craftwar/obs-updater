@@ -8,8 +8,8 @@ It shares the same settings with official OBS, no extra setup is required.
 Don't delete downloaded .7z/zip files, it's used for update check. (delete it only when you encounter download problem)
 
 
-Microsoft Visual C++ Redistributable for Visual Studio 2017 (x64 and x86) are required.
-2015 Redistributable is installed and 2017 is not installed, OBS may work abnormally. Install 2017 please. (don't uninstall old 2015/2017)
+Microsoft Visual C++ Redistributable for Visual Studio 2019 (x64 and x86) are required.
+OBS may work abnormally under older Redistributable. Install 2019 please. (don't uninstall old Redistributable)
 https://support.microsoft.com/help/2977003/the-latest-supported-visual-c-downloads
 
 Installer is recommended	https://github.com/craftwar/obs-updater/releases/download/git/craftwar.OBS.installer.exe

@@ -12,7 +12,7 @@ Page directory
 Page instfiles
 
 SetCompressor /SOLID LZMA
-!define VC_redist_dir "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\${VC_redist_ver}"
+!define VC_redist_dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\${VC_redist_ver}"
 
 Section "OBS Studio"
 	setOutPath $INSTDIR
