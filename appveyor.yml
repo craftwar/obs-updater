@@ -10,13 +10,29 @@ init:
 build_script:
 # work around until appveyor installs nsis
   - choco install nsis.install
+  
+# work around for curl (get from craftwar.obs_updater_VS2017_curl.zip)  
 #  - if exist 7z%SEVENZIP_VERSION%-extra.7z (curl -kLO https://www.7-zip.org/a/7z%SEVENZIP_VERSION%-extra.7z -f --retry 5 -z 7z%SEVENZIP_VERSION%-extra.7z) else (curl -kLO https://www.7-zip.org/a/7z%SEVENZIP_VERSION%-extra.7z -f --retry 5 -C -)
 #  - 7z x 7z%SEVENZIP_VERSION%-extra.7z -o7z-extra
-  - curl -kLO https://github.com/craftwar/obs-updater/releases/download/git/craftwar.obs_updater_VS2017_curl.zip -f --retry 5
-  - 7z x craftwar.obs_updater_VS2017_curl.zip
+#  - curl -kLO https://github.com/craftwar/obs-updater/releases/download/git/craftwar.obs_updater_VS2017_curl.zip -f --retry 5
+#  - 7z x craftwar.obs_updater_VS2017_curl.zip
+#  - cd craftwar.obs_updater
+#  - mklink /H curl.exe ..\curl.exe
+
+  - set VCPKG_LINKER_FLAGS=/LTCG
+  - set VCPKG_C_FLAGS=/Gw /Gy /GL /GS- /Zc:__cplusplus
+  - set VCPKG_CXX_FLAGS=%VCPKG_C_FLAGS%
+#[install vcpkg]
+  - cd C:\Tools
+  - cmd /c git clone https://github.com/Microsoft/vcpkg
+  - .\vcpkg\bootstrap-vcpkg.bat
+  - set path=C:\Tools\vcpkg;%path%
+  - cd %appveyor_build_folder%
+#[/install vcpkg]
+  - '"C:\Program Files\Git\usr\bin\sed.exe" -i "s/CRT_LINKAGE static/CRT_LINKAGE dynamic/" /c/tools/vcpkg/triplets/x64-windows-static.cmake' #patch to dynamic crt
+  - vcpkg install curl[tool,winssl]:x64-windows-static
   - cd craftwar.obs_updater
-# work around for curl (get from craftwar.obs_updater_VS2017_curl.zip)
-  - mklink /H curl.exe ..\curl.exe
+  - mklink /H curl.exe C:\Tools\vcpkg\installed\x64-windows-static\tools\curl\curl.exe
 #  - mklink /H 7za.exe "%APPVEYOR_BUILD_FOLDER%\7z-extra\x64\7za.exe"
 # remove curl, support Win10 1803 later only
 #  - mklink /H curl.exe C:\Tools\curl\bin\curl.exe
@@ -44,6 +60,8 @@ deploy:
 
 test: off
 
+#cache:
+#  - C:\tools\vcpkg\installed\ -> appveyor.yml
 #cache:
 #  - '7z%SEVENZIP_VERSION%-extra.7z'
 
