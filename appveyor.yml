@@ -23,11 +23,11 @@ build_script:
   - set VCPKG_C_FLAGS=/Gw /Gy /GL /GS- /Zc:__cplusplus
   - set VCPKG_CXX_FLAGS=%VCPKG_C_FLAGS%
 #[install vcpkg]
-  - cd C:\Tools
-  - cmd /c git clone https://github.com/Microsoft/vcpkg
-  - .\vcpkg\bootstrap-vcpkg.bat
-  - set path=C:\Tools\vcpkg;%path%
-  - cd %appveyor_build_folder%
+#  - cd C:\Tools
+#  - cmd /c git clone https://github.com/Microsoft/vcpkg
+#  - .\vcpkg\bootstrap-vcpkg.bat
+#  - set path=C:\Tools\vcpkg;%path%
+#  - cd %appveyor_build_folder%
 #[/install vcpkg]
   - '"C:\Program Files\Git\usr\bin\sed.exe" -i "s/CRT_LINKAGE static/CRT_LINKAGE dynamic/" /c/tools/vcpkg/triplets/x64-windows-static.cmake' #patch to dynamic crt
   - vcpkg install curl[tool,winssl]:x64-windows-static
@@ -60,8 +60,8 @@ deploy:
 
 test: off
 
-#cache:
-#  - C:\tools\vcpkg\installed\ -> appveyor.yml
+cache:
+  - C:\tools\vcpkg\installed\ -> appveyor.yml
 #cache:
 #  - '7z%SEVENZIP_VERSION%-extra.7z'
 
