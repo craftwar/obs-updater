@@ -6,11 +6,15 @@ if NOT DEFINED file_url (
 	if DEFINED favor_arch (
 		set file_url=https://github.com/craftwar/obs-studio/releases/download/git/OBS-git-craftwar-%favor_arch%.7z
 	) 
+	::echo %favor_arch%
 )
 if NOT DEFINED file (
 	set file=OBS-git-craftwar-CPU.7z
+	::echo %file%
 )
-
+::echo %favor_arch%
+::echo %file%
+::pause
 set file-new=%file%-new
 set _7z=7z.exe
 ::set _7z_options=
