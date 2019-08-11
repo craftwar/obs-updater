@@ -5,11 +5,10 @@ init:
   - ps: if (0) { iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1')) } #rdp debug
 #environment:
 #  SEVENZIP_VERSION: 1805
-#  CURL_VERSION: 7.62.0
  
 build_script:
 # work around until appveyor installs nsis
-  - choco install nsis.install
+#  - choco install nsis.install
   
 # work around for curl (get from craftwar.obs_updater_VS2017_curl.zip)  
 #  - if exist 7z%SEVENZIP_VERSION%-extra.7z (curl -kLO https://www.7-zip.org/a/7z%SEVENZIP_VERSION%-extra.7z -f --retry 5 -z 7z%SEVENZIP_VERSION%-extra.7z) else (curl -kLO https://www.7-zip.org/a/7z%SEVENZIP_VERSION%-extra.7z -f --retry 5 -C -)
@@ -22,6 +21,9 @@ build_script:
   - set VCPKG_LINKER_FLAGS=/LTCG
   - set VCPKG_C_FLAGS=/Gw /Gy /GL /GS- /Zc:__cplusplus
   - set VCPKG_CXX_FLAGS=%VCPKG_C_FLAGS%
+# use 8, same as git describe --always --tags
+  - set UPDATER_VER=%APPVEYOR_REPO_COMMIT:~0,8%
+  - ps: Add-Content -NoNewline  -Path ".\version.txt" -Value "${env:UPDATER_VER}"
 #[install vcpkg]
 #  - cd C:\Tools
 #  - cmd /c git clone https://github.com/Microsoft/vcpkg
@@ -29,22 +31,27 @@ build_script:
 #  - set path=C:\Tools\vcpkg;%path%
 #  - cd %appveyor_build_folder%
 #[/install vcpkg]
-  - '"C:\Program Files\Git\usr\bin\sed.exe" -i "s/CRT_LINKAGE static/CRT_LINKAGE dynamic/" /c/tools/vcpkg/triplets/x64-windows-static.cmake' #patch to dynamic crt
-  - vcpkg install curl[tool,winssl]:x64-windows-static
-  - cd craftwar.obs_updater
-  - mklink /H curl.exe C:\Tools\vcpkg\installed\x64-windows-static\tools\curl\curl.exe
-#  - mklink /H 7za.exe "%APPVEYOR_BUILD_FOLDER%\7z-extra\x64\7za.exe"
-# remove curl, support Win10 1803 later only
-#  - mklink /H curl.exe C:\Tools\curl\bin\curl.exe
-# use system curl, does it work on win7?
-#  - mklink /H curl.exe C:\Windows\System32\curl.exe
+  - vcpkg integrate install
+#  - '"C:\Program Files\Git\usr\bin\sed.exe" -i "s/CRT_LINKAGE static/CRT_LINKAGE dynamic/" /c/tools/vcpkg/triplets/x64-windows-static.cmake' #patch to dynamic crt
+#  - vcpkg install curl[winssl]:x64-windows-static
+#  - '"C:\Program Files\Git\usr\bin\sed.exe" -i "s/VCPKG_LIBRARY_LINKAGE dynamic/VCPKG_LIBRARY_LINKAGE static/" /c/tools/vcpkg/triplets/x64-windows.cmake' #patch to produce static lib
+  - vcpkg install curl[winssl]:x64-windows
+  - cd updater
+  - call msbuild /m /p:Configuration=Release;Platform=x64 "%APPVEYOR_BUILD_FOLDER%\cpp_updater\obs-updater.sln" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - copy "%APPVEYOR_BUILD_FOLDER%\cpp_updater\x64\Release\*.exe .
+  - copy "%APPVEYOR_BUILD_FOLDER%\cpp_updater\x64\Release\*.dll .
+#  - call msbuild /m /p:Configuration=Debug;Platform=x64 "%APPVEYOR_BUILD_FOLDER%\cpp_updater\obs-updater.sln" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+#  - copy "%APPVEYOR_BUILD_FOLDER%\cpp_updater\x64\Debug\*.exe .
+#  - copy "%APPVEYOR_BUILD_FOLDER%\cpp_updater\x64\Debug\*.dll .
   - mklink /H 7z.exe "C:\Program Files\7-Zip\7z.exe"
   - mklink /H 7z.dll "C:\Program Files\7-Zip\7z.dll"
   - 7z a "%APPVEYOR_BUILD_FOLDER%\craftwar.obs_updater.zip" -mx=9 -mpass=15 -mcu=on * -x!0_createZip.cmd -x!obs-studio.ico
   - cd ..
   - call installer\get-vc-ver.cmd
   - '"C:\Program Files (x86)\NSIS\Bin\makensis" /NOCD /NOCONFIG /INPUTCHARSET UTF8 /DVC_redist_ver=%VC_redist_ver% installer\installer.nsi'
+#  - cmd
 artifacts:
+- path: version.txt
 - path: craftwar.obs_updater.zip
 - path: 'craftwar OBS installer.exe'
 
@@ -61,7 +68,8 @@ deploy:
 test: off
 
 cache:
-  - C:\tools\vcpkg\installed\ -> appveyor.yml
+  - C:\tools\vcpkg\installed\
+#  - C:\tools\vcpkg\installed\ -> appveyor.yml
 #cache:
 #  - '7z%SEVENZIP_VERSION%-extra.7z'
 

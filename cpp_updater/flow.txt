@@ -1,0 +1,9 @@
+1. get remote updater version, compare version
+2. download remote updater
+	2.1 extract & run new updater, old updater exit
+	2.2 run all tasks
+	2.3 new updater copy self to parent folder & delete self
+3. get remote obs version, compare version
+	3.1  download obs
+	3.2 extract & write version file
+4. run OBS
