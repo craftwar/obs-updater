@@ -208,7 +208,6 @@ int main(int argc, char *argv[])
 			if (STRCMP_CONST_NO_NULL(*arg, "-updater_ver") == 0) {
 				if (strcmp(*(++arg), ver.cur_updater) != 0) {
 					bUpdateUpdater = true;
-					printf("Running newer updater...");
 					OutputDebugStringA("Running newer updater...\n");
 				}
 			} else if (STRCMP_CONST_NO_NULL(*arg, "-vc_inc_arch") ==
@@ -258,18 +257,12 @@ int main(int argc, char *argv[])
 		}
 	} else { // bUpdateUpdater == true
 		const size_t length = update_info.updater_dir.length();
-		printf("update_info.updater_dir= %s length=%zu\n",
-		       update_info.updater_dir.c_str(), length);
 		OutputDebugStringA(update_info.updater_dir.c_str());
 		OutputDebugStringA("update_info.updater_dir()\n");
 		const size_t index =
 			update_info.updater_dir.find_last_of('\\', length - 2);
-		printf("index=%zu  char=%c\n", index,
-		       update_info.updater_dir[index]);
 		update_info.obs_dir =
 			update_info.updater_dir.substr(0, index + 1);
-		printf("update_info.obs_dir= %s\n",
-		       update_info.obs_dir.c_str());
 		OutputDebugStringA(update_info.obs_dir.c_str());
 		OutputDebugStringA("update_info.obs_dir.c_str()\n");
 	}

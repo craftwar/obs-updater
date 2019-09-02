@@ -16,11 +16,10 @@ static const char *UPDATER_URL = UPDATER_ROOT_URL "acraftwar.obs_updater.zip";
 #endif
 
 #define MAX_VERSION_LENGTH 41
-
 #define debug_updater 1
+
 #ifdef NDEBUG
-#define OutputDebugStringA(str) NOP(str)
-void NOP(const char *str){};
+#define OutputDebugStringA(str)
 #endif
 
 static struct {
