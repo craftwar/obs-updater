@@ -39,6 +39,22 @@ static struct {
 	char cur_obs[MAX_VERSION_LENGTH];
 } ver = {};
 
+static struct Error {
+	Error() : code(0) {};
+	~Error() {
+		if (code) {
+			printf("%s\n", str.c_str());
+			system("pause");
+		}
+	}
+	Error(const Error&) = delete;
+	Error& operator=(const Error&) = delete;
+
+	int code;
+	std::string str;
+};
+//} error;
+
 void get_cpu_arch();
 std::string get_obs_version_url();
 const char *get_obs_version_filename();

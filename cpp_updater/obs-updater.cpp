@@ -69,6 +69,7 @@ void get_version(const char *url)
 	update_info.size = 0;
 	curl_easy_setopt(update_info.curl, CURLOPT_URL, url);
 	curl_easy_perform(update_info.curl);
+	update_info.sha1[update_info.size] = 0;
 }
 
 size_t get_version_callback(char *ptr, size_t size, size_t nmemb,
@@ -76,7 +77,6 @@ size_t get_version_callback(char *ptr, size_t size, size_t nmemb,
 {
 	if (update_info.size + nmemb <= sizeof(update_info.sha1)) {
 		memcpy(update_info.sha1 + update_info.size, ptr, nmemb);
-		update_info.sha1[nmemb] = 0;
 		update_info.size += nmemb;
 
 		return nmemb;
@@ -166,9 +166,10 @@ void exec_program(LPSTR lpCommandLine)
 			    &si,           // Pointer to STARTUPINFO structure
 			    &pi) // Pointer to PROCESS_INFORMATION structure
 	) {
-		printf("CreateProcess failed (%d).\n", GetLastError());
+		printf("CreateProcess failed (%lu).\n", GetLastError());
 		printf("%s", lpCommandLine);
-		//return 1;
+		system("pause");
+		exit(1);
 	}
 	// auto-closed when program end
 	//CloseHandle(pi.hProcess);
@@ -181,15 +182,34 @@ void update_updater()
 	for (std::experimental::filesystem::directory_iterator iter(
 		     update_info.updater_dir);
 	     iter != end; ++iter) {
-		std::experimental::filesystem::copy(
-			*iter, update_info.obs_dir,
-			std::experimental::filesystem::copy_options::
-				create_hard_links);
+		try {
+			std::experimental::filesystem::copy(
+				*iter, update_info.obs_dir,
+				std::experimental::filesystem::copy_options::
+					create_hard_links);
+		} catch (const std::experimental::filesystem::filesystem_error
+				 &error) {
+			printf("[Error] copy from %s to %s: %s\n",
+			       error.path1().c_str(), error.path2().c_str(),
+			       error.what());
+			system("pause");
+			exit(1);
+		}
 	}
+
 	for (std::experimental::filesystem::directory_iterator iter(
 		     update_info.updater_dir);
-	     iter != end; ++iter)
-		std::experimental::filesystem::remove(*iter);
+	     iter != end; ++iter) {
+		try {
+			std::experimental::filesystem::remove(*iter);
+		} catch (const std::experimental::filesystem::filesystem_error
+				 &error) {
+			printf("[Error] delete %s: %s\n", error.path1().c_str(),
+			       error.what());
+			system("pause");
+			exit(1);
+		}
+	}
 }
 
 int main(int argc, char *argv[])
@@ -208,7 +228,8 @@ int main(int argc, char *argv[])
 			if (STRCMP_CONST_NO_NULL(*arg, "-updater_ver") == 0) {
 				if (strcmp(*(++arg), ver.cur_updater) != 0) {
 					bUpdateUpdater = true;
-					OutputDebugStringA("Running newer updater...\n");
+					OutputDebugStringA(
+						"Running newer updater...\n");
 				}
 			} else if (STRCMP_CONST_NO_NULL(*arg, "-vc_inc_arch") ==
 				   0)
@@ -237,7 +258,8 @@ int main(int argc, char *argv[])
 	if (!bUpdateUpdater) {
 		printf("%s Checking updater version...\n", ver.cur_updater);
 		get_version(UPDATER_VERSION_URL);
-		if (strcmp(ver.cur_updater, update_info.sha1) != 0) {
+		if (memcmp(ver.cur_updater, update_info.sha1,
+			   update_info.size + 1) != 0) {
 			printf("%s -> %s Getting newer updater...\n",
 			       ver.cur_updater, update_info.sha1);
 			static char path[] = "craftwar.obs_updater.zip";
@@ -253,7 +275,8 @@ int main(int argc, char *argv[])
 		} else {
 			update_info.obs_dir = update_info.updater_dir;
 			OutputDebugStringA(update_info.obs_dir.c_str());
-			OutputDebugStringA("update_info.obs_dir = update_info.updater_dir;\n");
+			OutputDebugStringA(
+				"update_info.obs_dir = update_info.updater_dir;\n");
 		}
 	} else { // bUpdateUpdater == true
 		const size_t length = update_info.updater_dir.length();
@@ -270,7 +293,7 @@ int main(int argc, char *argv[])
 	printf("Checking OBS version...\n");
 	get_version(get_obs_version_url().c_str());
 	read_obs_version();
-	if (strcmp(ver.cur_obs, update_info.sha1) != 0) {
+	if (memcmp(ver.cur_obs, update_info.sha1, update_info.size + 1) != 0) {
 		printf("%s -> %s Getting newer OBS...\n", ver.cur_obs,
 		       update_info.sha1);
 		std::string path = update_info.obs_dir + get_obs_filename();
