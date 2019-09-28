@@ -178,16 +178,16 @@ void exec_program(LPSTR lpCommandLine)
 
 void update_updater()
 {
-	auto const end = std::experimental::filesystem::directory_iterator();
-	for (std::experimental::filesystem::directory_iterator iter(
+	auto const end = std::filesystem::directory_iterator();
+	for (std::filesystem::directory_iterator iter(
 		     update_info.updater_dir);
 	     iter != end; ++iter) {
 		try {
-			std::experimental::filesystem::copy(
+			std::filesystem::copy(
 				*iter, update_info.obs_dir,
-				std::experimental::filesystem::copy_options::
+				std::filesystem::copy_options::
 					create_hard_links);
-		} catch (const std::experimental::filesystem::filesystem_error
+		} catch (const std::filesystem::filesystem_error
 				 &error) {
 			printf("[Error] copy from %s to %s: %s\n",
 			       error.path1().c_str(), error.path2().c_str(),
@@ -197,12 +197,12 @@ void update_updater()
 		}
 	}
 
-	for (std::experimental::filesystem::directory_iterator iter(
+	for (std::filesystem::directory_iterator iter(
 		     update_info.updater_dir);
 	     iter != end; ++iter) {
 		try {
-			std::experimental::filesystem::remove(*iter);
-		} catch (const std::experimental::filesystem::filesystem_error
+			std::filesystem::remove(*iter);
+		} catch (const std::filesystem::filesystem_error
 				 &error) {
 			printf("[Error] delete %s: %s\n", error.path1().c_str(),
 			       error.what());
