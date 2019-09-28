@@ -1,6 +1,6 @@
 This is craftwar's customized OBS Studio. (improve performance, fix bug)
 Added features: display playing song, VNR translation (read blog for detail)
-http://craftwarblog.blogspot.com/2017/09/chatty-obs-by-craftwar.html
+https://craftwarblog.blogspot.com/2017/09/obs-studioby-craftwar.html
 
 I remove some plugins. You need more features, you need install them yourself or use official OBS Studio version instead.
 It shares the same settings with official OBS, no extra setup is required.

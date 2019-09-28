@@ -1,6 +1,6 @@
 這是craftwar修改的OBS Studio，提高效能及修正bug外
 新增功能: 顯示播放中的歌名及VNR翻譯，詳細說明請去blog看
-https://craftwarblog.blogspot.com/2017/09/chatty-obs-by-craftwar.html
+https://craftwarblog.blogspot.com/2017/09/obs-studioby-craftwar.html
 
 拔掉一些功能，如果你需要的沒有，請另外安裝或使用官方版本
 設定是和官方版共用的，不需要重新設定
