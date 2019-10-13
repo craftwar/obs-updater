@@ -3,6 +3,9 @@
 
 // https://github.com/obsproject/obs-studio/blob/dd3ed096f891742e0c35f8237e198edab7377b45/deps/file-updater/file-updater/file-updater.c
 
+#define STRCPY_CONST(dest, src) memcpy(dest, src, sizeof(dest))
+#define STRCPY_CONST_NO_NULL(dest, src) memcpy(dest, src, sizeof(dest)-1)
+
 // use __cpuid? better information
 // https://docs.microsoft.com/cpp/intrinsics/cpuid-cpuidex
 void get_cpu_arch()
@@ -214,8 +217,14 @@ void update_updater()
 
 int main(int argc, char *argv[])
 {
+	const char mutexName[] = "Local\\craftwar's OBS updater " UPDATER_VER;
+	HANDLE mutex = CreateMutexA(NULL, TRUE, mutexName);
+#ifdef _DEBUG
+	DWORD error = GetLastError();
+#endif
+	if (mutex == NULL)
+		exit(1);
 	//enum class Mode : unsigned char { check, update } mode;
-
 	static bool bUpdateUpdater = false;
 
 	// parse updater args
