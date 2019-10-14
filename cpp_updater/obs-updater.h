@@ -6,7 +6,7 @@
 #define UPDATER_ROOT_URL \
 	"https://github.com/craftwar/obs-updater/releases/download/git/"
 static const char *UPDATER_VERSION_URL = UPDATER_ROOT_URL "version.txt";
-static const char *UPDATER_URL = UPDATER_ROOT_URL "acraftwar.obs_updater.zip";
+static const char *UPDATER_URL = UPDATER_ROOT_URL "craftwar.obs_updater.zip";
 #define OBS_ROOT_URL \
 	"https://github.com/craftwar/obs-studio/releases/download/git/"
 
