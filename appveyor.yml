@@ -68,8 +68,8 @@ deploy:
 test: off
 
 cache:
-  - C:\tools\vcpkg\installed\
-#  - C:\tools\vcpkg\installed\ -> appveyor.yml
+#  - C:\tools\vcpkg\installed\
+  - C:\tools\vcpkg\installed\ -> appveyor.yml
 #cache:
 #  - '7z%SEVENZIP_VERSION%-extra.7z'
 
