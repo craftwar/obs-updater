@@ -141,10 +141,11 @@ void download_file(const char *url, const char *path)
 // %_7z% x %file% -y -o. %_7z_options%
 void extract_file(const char *file, const char *outputDir)
 {
-	std::string cmd("7z.exe x ");
+	std::string cmd("7z.exe x \"");
 	cmd += file;
-	cmd += " -y -o";
+	cmd += "\" -y -o\"";
 	cmd += outputDir;
+	cmd += '\"';
 	//std::system("dir");
 	std::system(cmd.c_str());
 }
