@@ -147,7 +147,12 @@ void extract_file(const char *file, const char *outputDir)
 	cmd += outputDir;
 	cmd += '\"';
 	//std::system("dir");
-	std::system(cmd.c_str());
+	int error = std::system(cmd.c_str());
+	if (error) {
+		printf("[Error=%d] when extracting \"%s\" to \"%s\"\n", error, file, outputDir);
+		std::system("pause");
+		exit(error);
+	}
 }
 
 void exec_program(LPSTR lpCommandLine)
@@ -172,7 +177,7 @@ void exec_program(LPSTR lpCommandLine)
 	) {
 		printf("CreateProcess failed (%lu).\n", GetLastError());
 		printf("%s", lpCommandLine);
-		system("pause");
+		std::system("pause");
 		exit(1);
 	}
 	// auto-closed when program end
@@ -196,7 +201,7 @@ void update_updater()
 			printf("[Error] copy from %s to %s: %s\n",
 			       error.path1().c_str(), error.path2().c_str(),
 			       error.what());
-			system("pause");
+			std::system("pause");
 			exit(1);
 		}
 	}
@@ -210,7 +215,7 @@ void update_updater()
 				 &error) {
 			printf("[Error] delete %s: %s\n", error.path1().c_str(),
 			       error.what());
-			system("pause");
+			std::system("pause");
 			exit(1);
 		}
 	}

@@ -41,6 +41,7 @@ static struct {
 
 static struct Error {
 	Error() : code(0) {};
+	Error(int code) : code(code) {};
 	~Error() {
 		if (code) {
 			printf("%s\n", str.c_str());
