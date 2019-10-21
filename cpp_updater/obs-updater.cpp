@@ -4,7 +4,7 @@
 // https://github.com/obsproject/obs-studio/blob/dd3ed096f891742e0c35f8237e198edab7377b45/deps/file-updater/file-updater/file-updater.c
 
 #define STRCPY_CONST(dest, src) memcpy(dest, src, sizeof(dest))
-#define STRCPY_CONST_NO_NULL(dest, src) memcpy(dest, src, sizeof(dest)-1)
+#define STRCPY_CONST_NO_NULL(dest, src) memcpy(dest, src, sizeof(dest) - 1)
 
 // use __cpuid? better information
 // https://docs.microsoft.com/cpp/intrinsics/cpuid-cpuidex
@@ -51,8 +51,7 @@ void get_updater_dir()
 	char *last = strrchr(_pgmptr, '\\');
 	//OutputDebugStringA(_pgmptr);
 	//OutputDebugStringA("\n");
-	update_info.updater_dir =
-		std::move(std::string(_pgmptr, last - _pgmptr + 1));
+	update_info.updater_dir = std::move(std::string(_pgmptr, last - _pgmptr + 1));
 	//OutputDebugStringA(update_info.updater_dir.c_str());
 	//OutputDebugStringA("\n");
 	//if (update_info.updater_dir.find("C:\Program Files")!=  std::string::npos)
@@ -66,8 +65,7 @@ void get_updater_dir()
 
 void get_version(const char *url)
 {
-	curl_easy_setopt(update_info.curl, CURLOPT_WRITEFUNCTION,
-			 get_version_callback);
+	curl_easy_setopt(update_info.curl, CURLOPT_WRITEFUNCTION, get_version_callback);
 	//curl_easy_setopt(update_info.curl, CURLOPT_WRITEDATA, NULL);
 	update_info.size = 0;
 	curl_easy_setopt(update_info.curl, CURLOPT_URL, url);
@@ -75,8 +73,7 @@ void get_version(const char *url)
 	update_info.sha1[update_info.size] = 0;
 }
 
-size_t get_version_callback(char *ptr, size_t size, size_t nmemb,
-			    void *userdata)
+size_t get_version_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	if (update_info.size + nmemb <= sizeof(update_info.sha1)) {
 		memcpy(update_info.sha1 + update_info.size, ptr, nmemb);
@@ -91,8 +88,7 @@ const char *get_obs_version_filename()
 {
 	static std::string fileName;
 	if (!fileName.length())
-		fileName = std::move(update_info.branch_name +
-				     update_info.vc_inc_arch + ".txt");
+		fileName = std::move(update_info.branch_name + update_info.vc_inc_arch + ".txt");
 
 	return fileName.c_str();
 }
@@ -103,8 +99,7 @@ const char *get_obs_versionFile_path()
 	OutputDebugStringA(path.c_str());
 	OutputDebugStringA("\n");
 	if (!path.length())
-		path = std::move(update_info.obs_dir +
-				 get_obs_version_filename());
+		path = std::move(update_info.obs_dir + get_obs_version_filename());
 	OutputDebugStringA(path.c_str());
 	OutputDebugStringA("\n");
 	return path.c_str();
@@ -131,8 +126,8 @@ void write_obs_version()
 void download_file(const char *url, const char *path)
 {
 	curl_easy_setopt(update_info.curl, CURLOPT_URL, url);
-	std::unique_ptr<std::FILE, decltype(std::fclose) *> file{
-		std::fopen(path, "wb"), std::fclose};
+	std::unique_ptr<std::FILE, decltype(std::fclose) *> file{std::fopen(path, "wb"),
+								 std::fclose};
 	curl_easy_setopt(update_info.curl, CURLOPT_WRITEDATA, file.get());
 	curl_easy_setopt(update_info.curl, CURLOPT_WRITEFUNCTION, NULL);
 	curl_easy_perform(update_info.curl);
@@ -173,7 +168,7 @@ void exec_program(LPSTR lpCommandLine)
 			    NULL,          // Use parent's environment block
 			    NULL,          // Use parent's starting directory
 			    &si,           // Pointer to STARTUPINFO structure
-			    &pi) // Pointer to PROCESS_INFORMATION structure
+			    &pi)           // Pointer to PROCESS_INFORMATION structure
 	) {
 		printf("CreateProcess failed (%lu).\n", GetLastError());
 		printf("%s", lpCommandLine);
@@ -187,34 +182,32 @@ void exec_program(LPSTR lpCommandLine)
 
 void update_updater()
 {
+	const std::filesystem::path const updater_path(update_info.updater_dir);
+	std::string::size_type pos = update_info.updater_dir.find_last_of('\\');
+	//if (pos != std::string::npos)
+	pos = update_info.updater_dir.find_last_of('\\', pos - 1);
+	const std::filesystem::path const target_path(update_info.updater_dir.substr(0, pos));
 	auto const end = std::filesystem::directory_iterator();
-	for (std::filesystem::directory_iterator iter(
-		     update_info.updater_dir);
-	     iter != end; ++iter) {
+	for (std::filesystem::directory_iterator iter(updater_path); iter != end; ++iter) {
 		try {
-			std::filesystem::copy(
-				*iter, update_info.obs_dir,
-				std::filesystem::copy_options::
-					create_hard_links);
-		} catch (const std::filesystem::filesystem_error
-				 &error) {
-			printf("[Error] copy from %s to %s: %s\n",
-			       error.path1().c_str(), error.path2().c_str(),
-			       error.what());
+			// create_hard_links fails when file exits (even overwrite is on)
+			std::filesystem::copy(iter->path(), target_path,
+					      std::filesystem::copy_options::overwrite_existing
+					      //|std::filesystem::copy_options::create_hard_links
+			);
+		} catch (const std::filesystem::filesystem_error &error) {
+			printf("[Error] copy from %s to %s: %s\n", error.path1().c_str(),
+			       error.path2().c_str(), error.what());
 			std::system("pause");
 			exit(1);
 		}
 	}
 
-	for (std::filesystem::directory_iterator iter(
-		     update_info.updater_dir);
-	     iter != end; ++iter) {
+	for (std::filesystem::directory_iterator iter(updater_path); iter != end; ++iter) {
 		try {
 			std::filesystem::remove(*iter);
-		} catch (const std::filesystem::filesystem_error
-				 &error) {
-			printf("[Error] delete %s: %s\n", error.path1().c_str(),
-			       error.what());
+		} catch (const std::filesystem::filesystem_error &error) {
+			printf("[Error] delete %s: %s\n", error.path1().c_str(), error.what());
 			std::system("pause");
 			exit(1);
 		}
@@ -243,11 +236,9 @@ int main(int argc, char *argv[])
 			if (STRCMP_CONST_NO_NULL(*arg, "-updater_ver") == 0) {
 				if (strcmp(*(++arg), ver.cur_updater) != 0) {
 					bUpdateUpdater = true;
-					OutputDebugStringA(
-						"Running newer updater...\n");
+					OutputDebugStringA("Running newer updater...\n");
 				}
-			} else if (STRCMP_CONST_NO_NULL(*arg, "-vc_inc_arch") ==
-				   0)
+			} else if (STRCMP_CONST_NO_NULL(*arg, "-vc_inc_arch") == 0)
 				update_info.vc_inc_arch = *(++arg);
 			//else if (STRCMP_CONST_NO_NULL(arg, "-obs_ver") == 0)
 			//	ver.cur_obs = *(++arg);
@@ -273,15 +264,13 @@ int main(int argc, char *argv[])
 	if (!bUpdateUpdater) {
 		printf("%s Checking updater version...\n", ver.cur_updater);
 		get_version(UPDATER_VERSION_URL);
-		if (memcmp(ver.cur_updater, update_info.sha1,
-			   update_info.size + 1) != 0) {
-			printf("%s -> %s Getting newer updater...\n",
-			       ver.cur_updater, update_info.sha1);
+		if (memcmp(ver.cur_updater, update_info.sha1, update_info.size + 1) != 0) {
+			printf("%s -> %s Getting newer updater...\n", ver.cur_updater,
+			       update_info.sha1);
 			static char path[] = "craftwar.obs_updater.zip";
 			download_file(UPDATER_URL, path);
 			extract_file(path, "update");
-			std::string cmd =
-				"update\\craftwar-obs-updater.exe -updater_ver ";
+			std::string cmd = "update\\craftwar-obs-updater.exe -updater_ver ";
 			cmd += ver.cur_updater;
 
 			exec_program((LPSTR)cmd.c_str());
@@ -290,17 +279,14 @@ int main(int argc, char *argv[])
 		} else {
 			update_info.obs_dir = update_info.updater_dir;
 			OutputDebugStringA(update_info.obs_dir.c_str());
-			OutputDebugStringA(
-				"update_info.obs_dir = update_info.updater_dir;\n");
+			OutputDebugStringA("update_info.obs_dir = update_info.updater_dir;\n");
 		}
 	} else { // bUpdateUpdater == true
 		const size_t length = update_info.updater_dir.length();
 		OutputDebugStringA(update_info.updater_dir.c_str());
 		OutputDebugStringA("update_info.updater_dir()\n");
-		const size_t index =
-			update_info.updater_dir.find_last_of('\\', length - 2);
-		update_info.obs_dir =
-			update_info.updater_dir.substr(0, index + 1);
+		const size_t index = update_info.updater_dir.find_last_of('\\', length - 2);
+		update_info.obs_dir = update_info.updater_dir.substr(0, index + 1);
 		OutputDebugStringA(update_info.obs_dir.c_str());
 		OutputDebugStringA("update_info.obs_dir.c_str()\n");
 	}
@@ -309,8 +295,7 @@ int main(int argc, char *argv[])
 	get_version(get_obs_version_url().c_str());
 	read_obs_version();
 	if (memcmp(ver.cur_obs, update_info.sha1, update_info.size + 1) != 0) {
-		printf("%s -> %s Getting newer OBS...\n", ver.cur_obs,
-		       update_info.sha1);
+		printf("%s -> %s Getting newer OBS...\n", ver.cur_obs, update_info.sha1);
 		std::string path = update_info.obs_dir + get_obs_filename();
 		download_file(get_obs_url().c_str(), path.c_str());
 		extract_file(path.c_str(), update_info.obs_dir.c_str());
