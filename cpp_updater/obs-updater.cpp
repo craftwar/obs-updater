@@ -312,7 +312,9 @@ int main(int argc, char *argv[])
 
 	if (bUpdateUpdater) {
 		printf("Updating newer updater...\n");
-		update_updater();
+		_chdir(update_info.updater_dir.c_str());
+		std::system("move /y *.* ..");
+		//update_updater();
 	}
 
 	return 0;

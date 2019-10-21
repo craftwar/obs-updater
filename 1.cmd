@@ -1,0 +1,1 @@
+"F:\Portable tools\nsis-3.03\makensis" /NOCD /NOCONFIG /INPUTCHARSET UTF8 /DVC_redist_ver=%VC_redist_ver% installer\installer.nsi
