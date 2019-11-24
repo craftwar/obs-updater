@@ -182,11 +182,11 @@ void exec_program(LPSTR lpCommandLine)
 
 void update_updater()
 {
-	const std::filesystem::path const updater_path(update_info.updater_dir);
+	const std::filesystem::path updater_path(update_info.updater_dir);
 	std::string::size_type pos = update_info.updater_dir.find_last_of('\\');
 	//if (pos != std::string::npos)
 	pos = update_info.updater_dir.find_last_of('\\', pos - 1);
-	const std::filesystem::path const target_path(update_info.updater_dir.substr(0, pos));
+	const std::filesystem::path target_path(update_info.updater_dir.substr(0, pos));
 	auto const end = std::filesystem::directory_iterator();
 	for (std::filesystem::directory_iterator iter(updater_path); iter != end; ++iter) {
 		try {

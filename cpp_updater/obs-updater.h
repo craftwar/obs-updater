@@ -3,12 +3,10 @@
 #define STRCMP_CONST(str, const_str) memcmp(str, const_str, sizeof(const_str))
 #define ARRAY_LEN(array) (sizeof(array) / sizeof(*array))
 
-#define UPDATER_ROOT_URL \
-	"https://github.com/craftwar/obs-updater/releases/download/git/"
+#define UPDATER_ROOT_URL "https://github.com/craftwar/obs-updater/releases/download/git/"
 static const char *UPDATER_VERSION_URL = UPDATER_ROOT_URL "version.txt";
 static const char *UPDATER_URL = UPDATER_ROOT_URL "craftwar.obs_updater.zip";
-#define OBS_ROOT_URL \
-	"https://github.com/craftwar/obs-studio/releases/download/git/"
+#define OBS_ROOT_URL "https://github.com/craftwar/obs-studio/releases/download/git/"
 
 // UPDATER_VER is set as evironment variable in project preprocessor definition
 #ifndef UPDATER_VER
@@ -35,21 +33,22 @@ static struct {
 } update_info = {};
 
 static struct {
-	const char *cur_updater = UPDATER_VER;
+	const char *const cur_updater = UPDATER_VER;
 	char cur_obs[MAX_VERSION_LENGTH];
 } ver = {};
 
 static struct Error {
-	Error() : code(0) {};
-	Error(int code) : code(code) {};
-	~Error() {
+	Error() : code(0){};
+	Error(int code) : code(code){};
+	~Error()
+	{
 		if (code) {
 			printf("%s\n", str.c_str());
 			system("pause");
 		}
 	}
-	Error(const Error&) = delete;
-	Error& operator=(const Error&) = delete;
+	Error(const Error &) = delete;
+	Error &operator=(const Error &) = delete;
 
 	int code;
 	std::string str;
@@ -65,8 +64,7 @@ std::string get_obs_url();
 void get_updater_dir();
 //void get_obs_dir();
 void get_version(const char *url);
-size_t get_version_callback(char *ptr, size_t size, size_t nmemb,
-			    void *userdata);
+size_t get_version_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
 void download_file(const char *url, const char *path);
 void extract_file(const char *file, const char *dir);
 void update_updater();
