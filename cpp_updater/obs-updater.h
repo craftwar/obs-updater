@@ -3,10 +3,24 @@
 #define STRCMP_CONST(str, const_str) memcmp(str, const_str, sizeof(const_str))
 #define ARRAY_LEN(array) (sizeof(array) / sizeof(*array))
 
+//#define test_update
+
+#ifndef test_update
+
 #define UPDATER_ROOT_URL "https://github.com/craftwar/obs-updater/releases/download/git/"
 static const char *UPDATER_VERSION_URL = UPDATER_ROOT_URL "version.txt";
 static const char *UPDATER_URL = UPDATER_ROOT_URL "craftwar.obs_updater.zip";
 #define OBS_ROOT_URL "https://github.com/craftwar/obs-studio/releases/download/git/"
+
+#else
+
+#define UPDATER_ROOT_URL "https://ci.appveyor.com/api/projects/craftwar_appveyor/obs-updater/artifacts/"
+static const char* UPDATER_VERSION_URL = UPDATER_ROOT_URL "version.txt" "?branch=dev";
+static const char* UPDATER_URL = UPDATER_ROOT_URL "craftwar.obs_updater.zip" "?branch=dev";
+
+#endif
+
+
 
 // UPDATER_VER is set as evironment variable in project preprocessor definition
 #ifndef UPDATER_VER
