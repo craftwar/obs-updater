@@ -216,6 +216,7 @@ void update_updater()
 
 int main(int argc, char *argv[])
 {
+	std::system("cd"); // for debug
 	const char mutexName[] = "Local\\craftwar's OBS updater " UPDATER_VER;
 	HANDLE mutex = CreateMutexA(NULL, TRUE, mutexName);
 #ifdef _DEBUG
