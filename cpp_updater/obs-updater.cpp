@@ -273,6 +273,8 @@ int main(int argc, char *argv[])
 			extract_file(path, "update");
 			std::string cmd = "update\\craftwar-obs-updater.exe -updater_ver ";
 			cmd += ver.cur_updater;
+			cmd += " -vc_inc_arch ";
+			cmd += update_info.vc_inc_arch;
 
 			exec_program((LPSTR)cmd.c_str());
 
