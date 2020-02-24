@@ -206,8 +206,9 @@ void update_updater()
 					      //|std::filesystem::copy_options::create_hard_links
 			);
 		} catch (const std::filesystem::filesystem_error &error) {
-			wprintf(L"[Error] copy from %s to %s: %s\n", error.path1().c_str(),
-				error.path2().c_str(), error.what());
+			wprintf(L"[Error] copy from %s to %s: %s\n",
+				error.path1().wstring().c_str(), error.path2().wstring().c_str(),
+				error.what());
 			std::system("pause");
 			exit(1);
 		}
@@ -217,7 +218,8 @@ void update_updater()
 		try {
 			std::filesystem::remove(*iter);
 		} catch (const std::filesystem::filesystem_error &error) {
-			wprintf(L"[Error] delete %s: %s\n", error.path1().c_str(), error.what());
+			wprintf(L"[Error] delete %s: %s\n", error.path1().wstring().c_str(),
+				error.what());
 			std::system("pause");
 			exit(1);
 		}
