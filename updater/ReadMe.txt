@@ -3,7 +3,7 @@ Added features: display playing song, VNR translation (read blog for detail)
 https://craftwarblog.blogspot.com/2017/09/obs-studioby-craftwar.html
 
 I remove some plugins. You need more features, you need install them yourself or use official OBS Studio version instead.
-It shares the same settings with official OBS, no extra setup is required.
+It shares the same settings with official OBS, no extra setup is required. To keep settings seperated, you can run in portable mode. (add -p to program parameter)
 **Don't install under system folder (ex: C:\Program Files (x86)\), updater can't write. Install in C:\craftwar_OBS or D:\craftwar_OBS ...etc
 Don't delete downloaded .7z/zip files, it's used for update check. (delete it only when you encounter download problem)
 
@@ -21,9 +21,9 @@ Updater updates craftwar's OBS studio only. (not including plugins you install)
 Share updater only, not OBS you get from updating. (CPU specific version is slower in incorrect CPU)
 
 
-Q:	How do I know I need update plugin?
+Q:	How do I know I need update additional installed plugin?
 A:	When OBS version is changed, you may need update it.
 	Put newer plugin into OBS to overwrite it or download official OBS and overwite with my updater.
 
 more details (in Traditional Chinese)
-http://craftwarblog.blogspot.com/2017/09/chatty-obs-by-craftwar.html
+https://craftwarblog.blogspot.com/2017/09/obs-studioby-craftwar.html

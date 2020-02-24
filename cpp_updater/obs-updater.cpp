@@ -214,6 +214,7 @@ void update_updater()
 		}
 	}
 
+	// %Ts %hs?? way to specify string type? wide/byte?
 	for (std::filesystem::directory_iterator iter(updater_path); iter != end; ++iter) {
 		try {
 			std::filesystem::remove(*iter);
@@ -265,6 +266,7 @@ int wmain(int argc, wchar_t *__restrict argv[])
 	static bool bUpdateUpdater = false;
 
 	// parse updater args
+	std::wstring extra_parameters;
 	{
 		wchar_t **const end = argv + argc;
 		for (wchar_t **arg = argv + 1; arg < end; ++arg) {
@@ -276,8 +278,12 @@ int wmain(int argc, wchar_t *__restrict argv[])
 					bUpdateUpdater = true;
 					OutputDebugStringW(L"Running newer updater...\n");
 				}
-			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-vc_inc_arch") == 0)
+			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-vc_inc_arch") == 0) {
 				update_info.vc_inc_arch = *(++arg);
+			} else {
+				extra_parameters += L' ';
+				extra_parameters += *arg;
+			}
 			//else if (STRCMP_CONST_NO_NULL(arg, "-obs_ver") == 0)
 			//	ver.cur_obs = *(++arg);
 		}
@@ -348,8 +354,9 @@ int wmain(int argc, wchar_t *__restrict argv[])
 	_wchdir(obs_bin_dir.c_str());
 	wprintf(L"Starting OBS...\n");
 	//system("obs64.exe");
-	wchar_t obs_exe[] = L"obs64.exe"; // CreateProcessW can modify the contents of this string
-	exec_program(obs_exe);
+	std::wstring obs_exe(L"obs64.exe"); // CreateProcessW can modify the contents of this string
+	obs_exe += extra_parameters;
+	exec_program(obs_exe.data());
 
 	if (bUpdateUpdater) {
 		wprintf(L"Updating newer updater...\n");
