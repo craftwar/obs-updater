@@ -116,7 +116,7 @@ void read_obs_version()
 	if (file.get()) {
 		int c;
 		wchar_t *ptr = ver.cur_obs;
-		while (c = fgetc(file.get()))
+		while ((c = std::fgetc(file.get())) != EOF)
 			*ptr++ = c;
 		//*ptr = 0;
 	}
@@ -129,7 +129,7 @@ void write_obs_version()
 	if (file.get()) {
 		wchar_t *ptr = update_info.sha1;
 		while (*ptr)
-			fputc(*ptr++, file.get());
+			std::fputc(*ptr++, file.get());
 	} else
 		wprintf(L"can't write obs_versionFile\n");
 }
