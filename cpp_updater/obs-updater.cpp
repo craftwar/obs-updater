@@ -206,21 +206,22 @@ void update_updater()
 					      //|std::filesystem::copy_options::create_hard_links
 			);
 		} catch (const std::filesystem::filesystem_error &error) {
-			wprintf(L"[Error] copy from %s to %s: %s\n",
-				error.path1().wstring().c_str(), error.path2().wstring().c_str(),
-				error.what());
+			std::printf("[Error] copy from %ls to %ls: %s\n",
+				    error.path1().wstring().c_str(),
+				    error.path2().wstring().c_str(), error.what());
 			std::system("pause");
 			exit(1);
 		}
 	}
 
-	// %Ts %hs?? way to specify string type? wide/byte?
+	// %Ts %hs?? way to specify string type? wide/byte? (M$-specific)
+	// %hs M$-specific means char*
 	for (std::filesystem::directory_iterator iter(updater_path); iter != end; ++iter) {
 		try {
 			std::filesystem::remove(*iter);
 		} catch (const std::filesystem::filesystem_error &error) {
-			wprintf(L"[Error] delete %s: %s\n", error.path1().wstring().c_str(),
-				error.what());
+			std::printf("[Error] delete %ls: %s\n", error.path1().wstring().c_str(),
+				    error.what());
 			std::system("pause");
 			exit(1);
 		}
