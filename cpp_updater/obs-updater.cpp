@@ -74,10 +74,10 @@ void get_version(const char *url)
 	update_info.sha1[update_info.size] = 0;
 }
 
-size_t get_version_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
+size_t get_version_callback(char *__restrict ptr, size_t size, size_t nmemb, void *userdata)
 {
 	if (update_info.size + nmemb < ARRAY_LEN(update_info.sha1)) {
-		wchar_t *wptr = update_info.sha1 + update_info.size;
+		wchar_t *__restrict wptr = update_info.sha1 + update_info.size;
 		wchar_t *end = wptr + nmemb;
 		while (wptr < end)
 			*wptr++ = *ptr++;
@@ -115,7 +115,7 @@ void read_obs_version()
 		_wfopen(get_obs_versionFile_path(), L"r"), std::fclose};
 	if (file.get()) {
 		int c;
-		wchar_t *ptr = ver.cur_obs;
+		wchar_t *__restrict ptr = ver.cur_obs;
 		while ((c = std::fgetc(file.get())) != EOF)
 			*ptr++ = c;
 		//*ptr = 0;
@@ -127,7 +127,7 @@ void write_obs_version()
 	std::unique_ptr<std::FILE, decltype(std::fclose) *> file{
 		_wfopen(get_obs_versionFile_path(), L"w"), std::fclose};
 	if (file.get()) {
-		wchar_t *ptr = update_info.sha1;
+		wchar_t *__restrict ptr = update_info.sha1;
 		while (*ptr)
 			std::fputc(*ptr++, file.get());
 	} else
@@ -320,7 +320,7 @@ int wmain(int argc, wchar_t *__restrict argv[])
 			cmd += L" -vc_inc_arch ";
 			cmd += update_info.vc_inc_arch;
 
-			exec_program((LPWSTR)cmd.c_str());
+			exec_program(cmd.data());
 
 			return 0;
 		} else {
