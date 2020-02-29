@@ -155,7 +155,7 @@ int extract_file(const wchar_t *file, const wchar_t *outputDir)
 	if (error) {
 		wprintf(L"[Error=%d] when extracting \"%s\" to \"%s\"\n", error, file, outputDir);
 		std::system("pause");
-		exit(error);
+		//exit(error);
 	}
 	return error;
 }
