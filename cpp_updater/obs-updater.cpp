@@ -118,7 +118,6 @@ void read_obs_version()
 		wchar_t *__restrict ptr = ver.cur_obs;
 		while ((c = std::fgetc(file.get())) != EOF)
 			*ptr++ = c;
-		//*ptr = 0;
 	}
 }
 
@@ -144,7 +143,7 @@ void download_file(const char *url, const wchar_t *path)
 }
 
 // %_7z% x %file% -y -o. %_7z_options%
-void extract_file(const wchar_t *file, const wchar_t *outputDir)
+int extract_file(const wchar_t *file, const wchar_t *outputDir)
 {
 	std::wstring cmd(L"7z.exe x \"");
 	cmd += file;
@@ -158,6 +157,7 @@ void extract_file(const wchar_t *file, const wchar_t *outputDir)
 		std::system("pause");
 		exit(error);
 	}
+	return error;
 }
 
 void exec_program(LPWSTR lpCommandLine)
@@ -309,7 +309,8 @@ int wmain(int argc, wchar_t *__restrict argv[])
 	if (!bUpdateUpdater) {
 		wprintf(L"%s Checking updater version...\n", ver.cur_updater);
 		get_version(UPDATER_VERSION_URL);
-		if (wmemcmp(ver.cur_updater, update_info.sha1, update_info.size + 1) != 0) {
+		if (update_info.size &&
+		    wmemcmp(ver.cur_updater, update_info.sha1, update_info.size + 1) != 0) {
 			wprintf(L"%s -> %s Getting newer updater...\n", ver.cur_updater,
 				update_info.sha1);
 			static wchar_t path[] = L"craftwar.obs_updater.zip";
@@ -341,12 +342,12 @@ int wmain(int argc, wchar_t *__restrict argv[])
 	wprintf(L"Checking OBS version...\n");
 	get_version(get_obs_version_url().c_str());
 	read_obs_version();
-	if (wmemcmp(ver.cur_obs, update_info.sha1, update_info.size + 1) != 0) {
+	if (update_info.size && wmemcmp(ver.cur_obs, update_info.sha1, update_info.size + 1) != 0) {
 		wprintf(L"%s -> %s Getting newer OBS...\n", ver.cur_obs, update_info.sha1);
 		std::wstring path = update_info.obs_dir + get_obs_filename();
 		download_file(get_obs_url().c_str(), path.c_str());
-		extract_file(path.c_str(), update_info.obs_dir.c_str());
-		write_obs_version();
+		if (!extract_file(path.c_str(), update_info.obs_dir.c_str()))
+			write_obs_version();
 	}
 	curl_easy_cleanup(update_info.curl);
 	curl_global_cleanup();

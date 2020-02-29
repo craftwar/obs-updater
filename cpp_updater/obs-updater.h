@@ -81,7 +81,7 @@ void get_updater_dir();
 void get_version(const char *url);
 size_t get_version_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
 void download_file(const char *url, const wchar_t *path);
-void extract_file(const wchar_t *file, const wchar_t *dir);
+int extract_file(const wchar_t *file, const wchar_t *dir);
 void update_updater();
 std::unique_ptr<char[]> wstr_to_str(const wchar_t *wstr);
 std::unique_ptr<wchar_t[]> str_to_wstr(const char *__restrict str);
