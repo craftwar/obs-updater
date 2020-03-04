@@ -37,12 +37,24 @@ std::wstring get_obs_filename()
 	return filename;
 }
 
+std::wstring get_obs_gc_filename()
+{
+	return L"gc.7z";
+}
+
 //https://github.com/craftwar/obs-studio/releases/download/git/OBS-git-craftwar-AMD64-AVX2.7z
 std::string get_obs_url()
 {
 	std::string str(OBS_ROOT_URL);
 	std::unique_ptr<char[]> filename = wstr_to_str(get_obs_filename().c_str());
 	str += filename.get();
+	return str;
+}
+
+//https://github.com/craftwar/obs-studio/releases/download/git/gc-AMD64.7z
+std::string get_obs_gc_url()
+{
+	std::string str(OBS_ROOT_URL "gc.7z");
 	return str;
 }
 
@@ -143,13 +155,15 @@ void download_file(const char *url, const wchar_t *path)
 }
 
 // %_7z% x %file% -y -o. %_7z_options%
-int extract_file(const wchar_t *file, const wchar_t *outputDir)
+int extract_file(const wchar_t *file, const wchar_t *outputDir, const wchar_t *extra_options)
 {
 	std::wstring cmd(L"7z.exe x \"");
 	cmd += file;
 	cmd += L"\" -y -o\"";
 	cmd += outputDir;
 	cmd += L'\"';
+	if (extra_options)
+		cmd += extra_options;
 	//std::system("dir");
 	int error = _wsystem(cmd.c_str());
 	if (error) {
@@ -281,6 +295,10 @@ int wmain(int argc, wchar_t *__restrict argv[])
 				}
 			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-vc_inc_arch") == 0) {
 				update_info.vc_inc_arch = *(++arg);
+			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-no_wc") == 0) {
+				update_info.no_wc = true;
+			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-no_gc") == 0) {
+				update_info.no_gc = true;
 			} else {
 				extra_parameters += L' ';
 				extra_parameters += *arg;
@@ -346,8 +364,22 @@ int wmain(int argc, wchar_t *__restrict argv[])
 		wprintf(L"%s -> %s Getting newer OBS...\n", ver.cur_obs, update_info.sha1);
 		std::wstring path = update_info.obs_dir + get_obs_filename();
 		download_file(get_obs_url().c_str(), path.c_str());
-		if (!extract_file(path.c_str(), update_info.obs_dir.c_str()))
+		if (!extract_file(path.c_str(), update_info.obs_dir.c_str())) {
 			write_obs_version();
+			if (update_info.no_wc || update_info.no_gc) {
+				path = update_info.obs_dir + get_obs_gc_filename();
+				//xxx handle broken download, download only if file is updated
+				download_file(get_obs_gc_url().c_str(), path.c_str());
+				std::wstring ignore_options;
+				if (!update_info.no_wc)
+					ignore_options +=
+						L" -x!obs-plugins\\64bit\\win-capture.dll";
+				if (!update_info.no_gc)
+					ignore_options +=
+						L" \"-x!data\\obs-plugins\\win-capture\\*\"";
+				extract_file(path.c_str(), update_info.obs_dir.c_str());
+			}
+		}
 	}
 	curl_easy_cleanup(update_info.curl);
 	curl_global_cleanup();

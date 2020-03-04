@@ -44,6 +44,9 @@ static struct {
 	std::wstring vc_inc_arch;
 	std::wstring updater_dir;
 	std::wstring obs_dir;
+	// no git build file, use files signed by Jim to pass anti-cheat
+	bool no_wc = false; // don't use git win capture
+	bool no_gc = false; // don't use git game capture
 	//std::experimental::filesystem::path obs_dir;
 } update_info = {};
 
@@ -75,13 +78,15 @@ std::string get_obs_version_url();
 const wchar_t *get_obs_version_filename();
 const wchar_t *get_obs_versionFile_path();
 std::wstring get_obs_filename();
+std::wstring get_obs_gc_filename();
 std::string get_obs_url();
+std::string get_obs_gc_url();
 void get_updater_dir();
 //void get_obs_dir();
 void get_version(const char *url);
 size_t get_version_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
 void download_file(const char *url, const wchar_t *path);
-int extract_file(const wchar_t *file, const wchar_t *dir);
+int extract_file(const wchar_t *file, const wchar_t *dir, const wchar_t *extra_options = nullptr);
 void update_updater();
 std::unique_ptr<char[]> wstr_to_str(const wchar_t *wstr);
 std::unique_ptr<wchar_t[]> str_to_wstr(const char *__restrict str);
