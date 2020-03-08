@@ -83,7 +83,11 @@ void get_version(const char *url)
 	update_info.size = 0;
 	curl_easy_setopt(update_info.curl, CURLOPT_URL, url);
 	curl_easy_perform(update_info.curl);
-	update_info.sha1[update_info.size] = 0;
+
+	if (verify_download())
+		update_info.sha1[update_info.size] = 0;
+	else
+		update_info.sha1[0] = 0;
 }
 
 size_t get_version_callback(char *__restrict ptr, size_t size, size_t nmemb, void *userdata)
@@ -152,6 +156,17 @@ void download_file(const char *url, const wchar_t *path)
 	curl_easy_setopt(update_info.curl, CURLOPT_WRITEDATA, file.get());
 	curl_easy_setopt(update_info.curl, CURLOPT_WRITEFUNCTION, NULL);
 	curl_easy_perform(update_info.curl);
+}
+
+// check if download is successful
+bool verify_download()
+{
+	curl_off_t cl;
+	curl_easy_getinfo(update_info.curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &cl);
+	curl_off_t dl;
+	curl_easy_getinfo(update_info.curl, CURLINFO_SIZE_DOWNLOAD_T, &dl);
+
+	return dl != -1 && cl == dl;
 }
 
 // %_7z% x %file% -y -o. %_7z_options%
@@ -278,7 +293,7 @@ int wmain(int argc, wchar_t *__restrict argv[])
 	if (mutex == NULL)
 		exit(1);
 	//enum class Mode : unsigned char { check, update } mode;
-	static bool bUpdateUpdater = false;
+	static bool bUpdatedUpdater = false;
 
 	// parse updater args
 	std::wstring extra_parameters;
@@ -290,7 +305,7 @@ int wmain(int argc, wchar_t *__restrict argv[])
 			OutputDebugStringW(L"\n");
 			if (WCSCMP_CONST_NO_NULL(*arg, L"-updater_ver") == 0) {
 				if (wcscmp(*(++arg), ver.cur_updater) != 0) {
-					bUpdateUpdater = true;
+					bUpdatedUpdater = true;
 					OutputDebugStringW(L"Running newer updater...\n");
 				}
 			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-vc_inc_arch") == 0) {
@@ -324,7 +339,7 @@ int wmain(int argc, wchar_t *__restrict argv[])
 	get_updater_dir();
 	_wchdir(update_info.updater_dir.c_str());
 
-	if (!bUpdateUpdater) {
+	if (!bUpdatedUpdater) {
 		wprintf(L"%s Checking updater version...\n", ver.cur_updater);
 		get_version(UPDATER_VERSION_URL);
 		if (update_info.size &&
@@ -333,21 +348,26 @@ int wmain(int argc, wchar_t *__restrict argv[])
 				update_info.sha1);
 			static wchar_t path[] = L"craftwar.obs_updater.zip";
 			download_file(UPDATER_URL, path);
-			extract_file(path, L"update");
-			std::wstring cmd = L"update\\craftwar-obs-updater.exe -updater_ver ";
-			cmd += ver.cur_updater;
-			cmd += L" -vc_inc_arch ";
-			cmd += update_info.vc_inc_arch;
+			if (verify_download()) {
+				extract_file(path, L"update");
+				std::wstring cmd =
+					L"update\\craftwar-obs-updater.exe -updater_ver ";
+				cmd += ver.cur_updater;
+				cmd += L" -vc_inc_arch ";
+				cmd += update_info.vc_inc_arch;
 
-			exec_program(cmd.data());
+				exec_program(cmd.data());
 
-			return 0;
-		} else {
-			update_info.obs_dir = update_info.updater_dir;
-			OutputDebugStringW(update_info.obs_dir.c_str());
-			OutputDebugStringW(L"update_info.obs_dir = update_info.updater_dir;\n");
+				return 0;
+			} else {
+				wprintf(L"newer updater download is failed, use current updater! This may cause problem.\n");
+			}
 		}
-	} else { // bUpdateUpdater == true
+		update_info.obs_dir = update_info.updater_dir;
+		OutputDebugStringW(update_info.obs_dir.c_str());
+		OutputDebugStringW(L"update_info.obs_dir = update_info.updater_dir;\n");
+
+	} else { // bUpdatedUpdater == true
 		const size_t length = update_info.updater_dir.length();
 		OutputDebugStringW(update_info.updater_dir.c_str());
 		OutputDebugStringW(L"update_info.updater_dir()\n");
@@ -392,7 +412,7 @@ int wmain(int argc, wchar_t *__restrict argv[])
 	obs_exe += extra_parameters;
 	exec_program(obs_exe.data());
 
-	if (bUpdateUpdater) {
+	if (bUpdatedUpdater) {
 		wprintf(L"Updating newer updater...\n");
 		_wchdir(update_info.updater_dir.c_str());
 		std::system("move /y *.* ..");
