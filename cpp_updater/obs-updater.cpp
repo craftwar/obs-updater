@@ -82,6 +82,7 @@ void get_version(const char *url)
 	//curl_easy_setopt(update_info.curl, CURLOPT_WRITEDATA, NULL);
 	update_info.size = 0;
 	curl_easy_setopt(update_info.curl, CURLOPT_URL, url);
+	curl_easy_setopt(update_info.curl, CURLOPT_NOPROGRESS, 1);
 	curl_easy_perform(update_info.curl);
 
 	if (verify_download())
@@ -155,6 +156,7 @@ void download_file(const char *url, const wchar_t *path)
 	std::unique_ptr<std::FILE, decltype(std::fclose) *> file{_wfopen(path, L"wb"), std::fclose};
 	curl_easy_setopt(update_info.curl, CURLOPT_WRITEDATA, file.get());
 	curl_easy_setopt(update_info.curl, CURLOPT_WRITEFUNCTION, NULL);
+	curl_easy_setopt(update_info.curl, CURLOPT_NOPROGRESS, 0);
 	curl_easy_perform(update_info.curl);
 }
 
