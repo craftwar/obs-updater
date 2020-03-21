@@ -1,11 +1,12 @@
-這是craftwar修改的OBS Studio，提高效能及修正bug外
-新增功能: 顯示播放中的歌名及VNR翻譯，詳細說明請去blog看
+這是craftwar修改的OBS Studio，提高效能及修正bug，還有我新增的功能
+詳細說明請去blog看
 https://craftwarblog.blogspot.com/2017/09/obs-studioby-craftwar.html
 
-拔掉一些功能，如果你需要的沒有，請另外安裝或使用官方版本
+公告會發在Discord，使用上遇到問題也去那邊
+
+拔掉一些功能(一般使用不影響的)，如果你需要的沒有，請另外安裝或使用官方版本
 設定是和官方版共用的，不需要重新設定，如果要把設定分開可用portable mode (增加啟動參數 -p)
 **不要放在系統目錄下 (ex: C:\Program Files (x86)\) ，會沒權限寫入更新，可放在 C:\craftwar_OBS 或 D:\craftwar_OBS ...etc
-請勿刪除下載的壓縮案7z/zip，會用來檢查有無更新 (只有出問題時需要刪除重置)
 
 實況設定優化
 https://craftwarblog.blogspot.com/2018/07/obs-streaming-settings.html
@@ -19,12 +20,8 @@ https://support.microsoft.com/help/2977003/the-latest-supported-visual-c-downloa
 要釘選到工作列請用桌面的捷徑，直接在工作列釘會跳過更新檢查 (釘完桌面捷徑就可以砍了)
 
 updater只會更新craftwar做的OBS，不會更新你另外安裝的任何插件
-分享時請給updater就好，不要給完整的OBS (CPU特化版本用在不對的CPU會變慢)
-
+分享時請給updater就好，不要給完整的OBS (有對CPU特化，用在不對的CPU會變慢)
 
 Q:	如何知道我該更新另外安裝的其他插件?
 A:	當OBS版本號改變時，就有可能需要更新，否則有可能出現問題，你要等到出問題再處理也可以(?
 	更新方法為，把加裝的plugin覆蓋過去，或是下載官方版本，放入updater執行更新覆蓋
-
-其他詳細資訊，無法使用的時候
-https://craftwarblog.blogspot.com/2017/09/obs-studioby-craftwar.html
