@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "obs-updater.h"
+#include <clocale>
 
 // https://github.com/obsproject/obs-studio/blob/dd3ed096f891742e0c35f8237e198edab7377b45/deps/file-updater/file-updater/file-updater.c
 
@@ -78,6 +79,7 @@ void get_updater_dir()
 
 void get_version(const char *url)
 {
+	printf("Getting version file from %s\n", url);
 	curl_easy_setopt(update_info.curl, CURLOPT_WRITEFUNCTION, get_version_callback);
 	//curl_easy_setopt(update_info.curl, CURLOPT_WRITEDATA, NULL);
 	update_info.size = 0;
@@ -147,11 +149,12 @@ void write_obs_version()
 		while (*ptr)
 			std::fputc(*ptr++, file.get());
 	} else
-		wprintf(L"can't write obs_versionFile\n");
+		printf("can't write obs_versionFile\n");
 }
 
 void download_file(const char *url, const wchar_t *path)
 {
+	printf("Downloading file from %s\n", url);
 	curl_easy_setopt(update_info.curl, CURLOPT_URL, url);
 	std::unique_ptr<std::FILE, decltype(std::fclose) *> file{_wfopen(path, L"wb"), std::fclose};
 	curl_easy_setopt(update_info.curl, CURLOPT_WRITEDATA, file.get());
@@ -184,7 +187,7 @@ int extract_file(const wchar_t *file, const wchar_t *outputDir, const wchar_t *e
 	//std::system("dir");
 	int error = _wsystem(cmd.c_str());
 	if (error) {
-		wprintf(L"[Error=%d] when extracting \"%s\" to \"%s\"\n", error, file, outputDir);
+		printf("[Error=%d] when extracting \"%ls\" to \"%ls\"\n", error, file, outputDir);
 		std::system("pause");
 		//exit(error);
 	}
@@ -211,8 +214,8 @@ void exec_program(LPWSTR lpCommandLine)
 			    &si,           // Pointer to STARTUPINFO structure
 			    &pi)           // Pointer to PROCESS_INFORMATION structure
 	) {
-		wprintf(L"CreateProcess failed (%lu).\n", GetLastError());
-		wprintf(L"%s", lpCommandLine);
+		printf("CreateProcess failed (%lu).\n", GetLastError());
+		printf("%ls", lpCommandLine);
 		std::system("pause");
 		exit(1);
 	}
@@ -285,6 +288,11 @@ std::unique_ptr<wchar_t[]> str_to_wstr(const char *__restrict str)
 
 int wmain(int argc, wchar_t *__restrict argv[])
 {
+	std::setlocale(LC_ALL, "");
+	//wchar_t *const *const end = argv + argc;
+	//printf("argv = ");
+	//for (wchar_t ** __restrict it = argv; it < end; ++it)
+	//	printf("%ls", *it);
 	std::system("cd"); // for debug
 	// limit single instance to specific updater version
 	const wchar_t mutexName[] = L"Local\\craftwar's OBS updater " UPDATER_VER;
@@ -342,11 +350,11 @@ int wmain(int argc, wchar_t *__restrict argv[])
 	_wchdir(update_info.updater_dir.c_str());
 
 	if (!bUpdatedUpdater) {
-		wprintf(L"%s Checking updater version...\n", ver.cur_updater);
+		printf("%ls Checking updater version...\n", ver.cur_updater);
 		get_version(UPDATER_VERSION_URL);
 		if (update_info.size &&
 		    wmemcmp(ver.cur_updater, update_info.sha1, update_info.size + 1) != 0) {
-			wprintf(L"%s -> %s Getting newer updater...\n", ver.cur_updater,
+			printf("%ls -> %ls Getting newer updater...\n", ver.cur_updater,
 				update_info.sha1);
 			static wchar_t path[] = L"craftwar.obs_updater.zip";
 			download_file(UPDATER_URL, path);
@@ -362,7 +370,7 @@ int wmain(int argc, wchar_t *__restrict argv[])
 
 				return 0;
 			} else {
-				wprintf(L"newer updater download is failed, use current updater! This may cause problem.\n");
+				printf("newer updater download is failed, use current updater! This may cause problem.\n");
 			}
 		}
 		update_info.obs_dir = update_info.updater_dir;
@@ -379,11 +387,11 @@ int wmain(int argc, wchar_t *__restrict argv[])
 		OutputDebugStringW(L"update_info.obs_dir.c_str()\n");
 	}
 
-	wprintf(L"Checking OBS version...\n");
+	printf("Checking OBS version...\n");
 	get_version(get_obs_version_url().c_str());
 	read_obs_version();
 	if (update_info.size && wmemcmp(ver.cur_obs, update_info.sha1, update_info.size + 1) != 0) {
-		wprintf(L"%s -> %s Getting newer OBS...\n", ver.cur_obs, update_info.sha1);
+		printf("%ls -> %ls Getting newer OBS...\n", ver.cur_obs, update_info.sha1);
 		std::wstring path = update_info.obs_dir + get_obs_filename();
 		download_file(get_obs_url().c_str(), path.c_str());
 		if (!extract_file(path.c_str(), update_info.obs_dir.c_str())) {
@@ -408,14 +416,14 @@ int wmain(int argc, wchar_t *__restrict argv[])
 
 	std::wstring obs_bin_dir = update_info.obs_dir + L"bin\\64bit";
 	_wchdir(obs_bin_dir.c_str());
-	wprintf(L"Starting OBS...\n");
+	printf("Starting OBS...\n");
 	//system("obs64.exe");
 	std::wstring obs_exe(L"obs64.exe"); // CreateProcessW can modify the contents of this string
 	obs_exe += extra_parameters;
 	exec_program(obs_exe.data());
 
 	if (bUpdatedUpdater) {
-		wprintf(L"Updating newer updater...\n");
+		printf("Updating newer updater...\n");
 		_wchdir(update_info.updater_dir.c_str());
 		std::system("move /y *.* ..");
 		//update_updater();
