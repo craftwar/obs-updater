@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "obs-updater.h"
-#include <clocale>
+#include <locale>
 
 // https://github.com/obsproject/obs-studio/blob/dd3ed096f891742e0c35f8237e198edab7377b45/deps/file-updater/file-updater/file-updater.c
 
@@ -288,7 +288,9 @@ std::unique_ptr<wchar_t[]> str_to_wstr(const char *__restrict str)
 
 int wmain(int argc, wchar_t *__restrict argv[])
 {
-	std::setlocale(LC_ALL, "");
+	//std::setlocale(LC_ALL, "");
+	// replace the C++ global locale as well as the C locale with the user-preferred locale
+	std::locale::global(std::locale(""));
 	//wchar_t *const *const end = argv + argc;
 	//printf("argv = ");
 	//for (wchar_t ** __restrict it = argv; it < end; ++it)
