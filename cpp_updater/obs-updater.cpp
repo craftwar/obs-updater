@@ -311,9 +311,9 @@ int wmain(int argc, wchar_t *__restrict argv[])
 	static bool bUpdatedUpdater = false;
 
 	// parse updater args
-	std::wstring extra_parameters;
+	wchar_t **const end = argv + argc;
+	wchar_t **obs_arg = end;
 	{
-		wchar_t **const end = argv + argc;
 		for (wchar_t **arg = argv + 1; arg < end; ++arg) {
 			OutputDebugStringW(L"arg\n");
 			OutputDebugStringW(*arg);
@@ -326,18 +326,18 @@ int wmain(int argc, wchar_t *__restrict argv[])
 			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-vc_inc_arch") == 0) {
 				update_info.vc_inc_arch = *(++arg);
 			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-wc") == 0) {
-				if (!WCSCMP_CONST_NO_NULL(*arg, L"no"))
+				if (!WCSCMP_CONST_NO_NULL(*++arg, L"no"))
 					update_info.wc = file_source::no;
 				else if (!WCSCMP_CONST_NO_NULL(*arg, L"jim"))
 					update_info.wc = file_source::jim;
 			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-gc") == 0) {
-				if (!WCSCMP_CONST_NO_NULL(*arg, L"no"))
+				if (!WCSCMP_CONST_NO_NULL(*++arg, L"no"))
 					update_info.gc = file_source::no;
 				else if (!WCSCMP_CONST_NO_NULL(*arg, L"jim"))
 					update_info.gc = file_source::jim;
-			} else {
-				extra_parameters += L' ';
-				extra_parameters += *arg;
+			} else if (!WCSCMP_CONST_NO_NULL(*arg, L"-obs")) {
+				obs_arg = arg + 1;
+				break;
 			}
 			//else if (STRCMP_CONST_NO_NULL(arg, "-obs_ver") == 0)
 			//	ver.cur_obs = *(++arg);
@@ -374,11 +374,13 @@ int wmain(int argc, wchar_t *__restrict argv[])
 				std::wstring cmd =
 					L"update\\craftwar-obs-updater.exe -updater_ver ";
 				cmd += ver.cur_updater;
-				cmd += L" -vc_inc_arch ";
-				cmd += update_info.vc_inc_arch;
+				// pass all arguments to new updater
+				for (wchar_t **arg = argv + 1; arg < end; ++arg) {
+					cmd += L' ';
+					cmd += *arg;
+				}
 
 				exec_program(cmd.data());
-
 				return 0;
 			} else {
 				printf("newer updater download is failed, use current updater! This may cause problem.\n");
@@ -405,26 +407,27 @@ int wmain(int argc, wchar_t *__restrict argv[])
 		printf("%ls -> %ls Getting newer OBS...\n", ver.cur_obs, update_info.sha1);
 		std::wstring path = update_info.obs_dir + get_obs_filename();
 		download_file(get_obs_url().c_str(), path.c_str());
-		std::wstring ignore_options;
+		std::wstring obs_ignore_options;
 		if (update_info.wc != file_source::std)
-			ignore_options += IGNORE_WC;
+			obs_ignore_options += IGNORE_WC;
 		if (update_info.gc != file_source::std)
-			ignore_options += IGNORE_GC;
+			obs_ignore_options += IGNORE_GC;
 		if (!extract_file(path.c_str(), update_info.obs_dir.c_str(),
-				  ignore_options.c_str())) {
+				  obs_ignore_options.c_str())) {
 			write_obs_version();
+			// get some files from Jim's OBS
 			if (update_info.wc == file_source::jim ||
 			    update_info.gc == file_source::jim) {
 				path = update_info.obs_dir + get_obs_gc_filename();
 				//xxx handle broken download, download only if file is updated
 				download_file(get_obs_gc_url().c_str(), path.c_str());
-				std::wstring ignore_options;
+				std::wstring jim_ignore_options;
 				if (update_info.wc != file_source::jim)
-					ignore_options += IGNORE_WC;
+					jim_ignore_options += IGNORE_WC;
 				if (update_info.gc != file_source::jim)
-					ignore_options += IGNORE_GC;
+					jim_ignore_options += IGNORE_GC;
 				extract_file(path.c_str(), update_info.obs_dir.c_str(),
-					     ignore_options.c_str());
+					     jim_ignore_options.c_str());
 			}
 		}
 	}
@@ -436,7 +439,10 @@ int wmain(int argc, wchar_t *__restrict argv[])
 	printf("Starting OBS...\n");
 	//system("obs64.exe");
 	std::wstring obs_exe(L"obs64.exe"); // CreateProcessW can modify the contents of this string
-	obs_exe += extra_parameters;
+	for (wchar_t **arg = obs_arg; arg < end; ++arg) {
+		obs_exe += L' ';
+		obs_exe += *arg;
+	}
 	exec_program(obs_exe.data());
 
 	if (bUpdatedUpdater) {
