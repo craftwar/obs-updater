@@ -35,6 +35,12 @@ static const char *UPDATER_URL = UPDATER_ROOT_URL "craftwar.obs_updater.zip"
 #define OutputDebugStringW(str)
 #endif
 
+/* std: git build(unsinged)
+*  no:  don't extract, self management or whatever
+*  jim: get from extracted official obs file(singed), may pass anti-cheat
+*/
+enum class file_source : char { std, no, jim };
+
 static struct {
 	CURL *curl;
 	size_t size;
@@ -44,9 +50,8 @@ static struct {
 	std::wstring vc_inc_arch;
 	std::wstring updater_dir;
 	std::wstring obs_dir;
-	// no git build file, use files signed by Jim to pass anti-cheat
-	bool no_wc = false; // don't use git win capture
-	bool no_gc = false; // don't use git game capture
+	file_source wc = file_source::std;
+	file_source gc = file_source::std;
 	//std::experimental::filesystem::path obs_dir;
 } update_info = {};
 

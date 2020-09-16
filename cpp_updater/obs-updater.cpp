@@ -2,6 +2,9 @@
 #include "obs-updater.h"
 #include <locale>
 
+#define IGNORE_WC L" -x!obs-plugins\\64bit\\win-capture.dll"
+#define IGNORE_GC L" \"-x!data\\obs-plugins\\win-capture\\*\""
+
 // https://github.com/obsproject/obs-studio/blob/dd3ed096f891742e0c35f8237e198edab7377b45/deps/file-updater/file-updater/file-updater.c
 
 // use __cpuid? better information
@@ -322,10 +325,16 @@ int wmain(int argc, wchar_t *__restrict argv[])
 				}
 			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-vc_inc_arch") == 0) {
 				update_info.vc_inc_arch = *(++arg);
-			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-no_wc") == 0) {
-				update_info.no_wc = true;
-			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-no_gc") == 0) {
-				update_info.no_gc = true;
+			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-wc") == 0) {
+				if (!WCSCMP_CONST_NO_NULL(*arg, L"no"))
+					update_info.wc = file_source::no;
+				else if (!WCSCMP_CONST_NO_NULL(*arg, L"jim"))
+					update_info.wc = file_source::jim;
+			} else if (WCSCMP_CONST_NO_NULL(*arg, L"-gc") == 0) {
+				if (!WCSCMP_CONST_NO_NULL(*arg, L"no"))
+					update_info.gc = file_source::no;
+				else if (!WCSCMP_CONST_NO_NULL(*arg, L"jim"))
+					update_info.gc = file_source::jim;
 			} else {
 				extra_parameters += L' ';
 				extra_parameters += *arg;
@@ -357,7 +366,7 @@ int wmain(int argc, wchar_t *__restrict argv[])
 		if (update_info.size &&
 		    wmemcmp(ver.cur_updater, update_info.sha1, update_info.size + 1) != 0) {
 			printf("%ls -> %ls Getting newer updater...\n", ver.cur_updater,
-				update_info.sha1);
+			       update_info.sha1);
 			static wchar_t path[] = L"craftwar.obs_updater.zip";
 			download_file(UPDATER_URL, path);
 			if (verify_download()) {
@@ -396,20 +405,26 @@ int wmain(int argc, wchar_t *__restrict argv[])
 		printf("%ls -> %ls Getting newer OBS...\n", ver.cur_obs, update_info.sha1);
 		std::wstring path = update_info.obs_dir + get_obs_filename();
 		download_file(get_obs_url().c_str(), path.c_str());
-		if (!extract_file(path.c_str(), update_info.obs_dir.c_str())) {
+		std::wstring ignore_options;
+		if (update_info.wc != file_source::std)
+			ignore_options += IGNORE_WC;
+		if (update_info.gc != file_source::std)
+			ignore_options += IGNORE_GC;
+		if (!extract_file(path.c_str(), update_info.obs_dir.c_str(),
+				  ignore_options.c_str())) {
 			write_obs_version();
-			if (update_info.no_wc || update_info.no_gc) {
+			if (update_info.wc == file_source::jim ||
+			    update_info.gc == file_source::jim) {
 				path = update_info.obs_dir + get_obs_gc_filename();
 				//xxx handle broken download, download only if file is updated
 				download_file(get_obs_gc_url().c_str(), path.c_str());
 				std::wstring ignore_options;
-				if (!update_info.no_wc)
-					ignore_options +=
-						L" -x!obs-plugins\\64bit\\win-capture.dll";
-				if (!update_info.no_gc)
-					ignore_options +=
-						L" \"-x!data\\obs-plugins\\win-capture\\*\"";
-				extract_file(path.c_str(), update_info.obs_dir.c_str());
+				if (update_info.wc != file_source::jim)
+					ignore_options += IGNORE_WC;
+				if (update_info.gc != file_source::jim)
+					ignore_options += IGNORE_GC;
+				extract_file(path.c_str(), update_info.obs_dir.c_str(),
+					     ignore_options.c_str());
 			}
 		}
 	}
