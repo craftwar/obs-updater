@@ -23,6 +23,7 @@ build_script:
 # %APPVEYOR_REPO_BRANCH%
 #  - if "%APPVEYOR_REPO_BRANCH%" == "dev" (set build_type=Debug) else (set build_type=Release)
 
+  - set VCPKG_CMAKE_SYSTEM_VERSION=10.0
   - set VCPKG_LINKER_FLAGS=/LTCG
   - set VCPKG_C_FLAGS=/Gw /Gy /GL /GS- /Qspectre- /Zc:__cplusplus
   - set VCPKG_CXX_FLAGS=%VCPKG_C_FLAGS%
