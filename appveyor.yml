@@ -36,8 +36,8 @@ build_script:
 #  - .\vcpkg\bootstrap-vcpkg.bat
 #  - set path=C:\Tools\vcpkg;%path%
 #  - cd %appveyor_build_folder%
+#  - vcpkg integrate install
 #[/install vcpkg]
-  - vcpkg integrate install
 #  - '"C:\Program Files\Git\usr\bin\sed.exe" -i "s/CRT_LINKAGE static/CRT_LINKAGE dynamic/" /c/tools/vcpkg/triplets/x64-windows-static.cmake' #patch to dynamic crt
 #  - vcpkg install curl[winssl]:x64-windows-static
 #  - '"C:\Program Files\Git\usr\bin\sed.exe" -i "s/VCPKG_LIBRARY_LINKAGE dynamic/VCPKG_LIBRARY_LINKAGE static/" /c/tools/vcpkg/triplets/x64-windows.cmake' #patch to produce static lib
