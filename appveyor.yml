@@ -62,12 +62,10 @@ artifacts:
 - path: 'craftwar OBS installer.exe'
 
 deploy:
-  - provider: GitHub
+  - provider: Environment
+    name: github git
     tag: git
-#    description: $(APPVEYOR_REPO_COMMIT)
-    auth_token: $(github_auth_token)
-#    auth_token: 
-#      secure: KxeGOEgx0+XWdjLWDsyhC+B/w3m8zpvtVY/e+90lCLZgd/2VSuraPZDxdIPB5rfY
+    release: $(release)
     force_update: true
     on:
       branch: master
@@ -79,11 +77,3 @@ cache:
   - C:\tools\vcpkg\installed\ -> appveyor.yml
 #cache:
 #  - '7z%SEVENZIP_VERSION%-extra.7z'
-
-#notifications:
-#  - provider: Webhook
-#    url:
-#      secure: k1kpaz4CB5Rg5a3MTb4XKnd76fJ+9ozz5RACVnNjdgmAjA1OSssZ6LZ3g0NGfzc/
-#    headers:
-#      Authorization:
-#        secure: A0PBwpHtsYzBOuye1EeS0fl562T0NZEInwZp0ZVER1wLQSeE6gzWGrRo2a0E7hii
