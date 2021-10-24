@@ -55,6 +55,7 @@ build_script:
   - cd ..
   - call installer\get-vc-ver.cmd
   - '"C:\Program Files (x86)\NSIS\Bin\makensis" /NOCD /NOCONFIG /INPUTCHARSET UTF8 /DVC_redist_ver=%VC_redist_ver% installer\installer.nsi'
+  - set release=%APPVEYOR_REPO_COMMIT:~0,7%
 #  - cmd
 artifacts:
 - path: version.txt
