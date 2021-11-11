@@ -1,6 +1,6 @@
 version: '{build}'
 skip_tags: true
-image: Visual Studio 2019
+image: Visual Studio 2022
 init:
   - ps: if (0) { iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1')) } #rdp debug
 #environment:
@@ -54,7 +54,7 @@ build_script:
   - 7z a "%APPVEYOR_BUILD_FOLDER%\craftwar.obs_updater.zip" -mx=9 -mpass=15 -mcu=on * -x!0_createZip.cmd -x!obs-studio.ico
   - cd ..
   - call installer\get-vc-ver.cmd
-  - '"C:\Program Files (x86)\NSIS\Bin\makensis" /NOCD /NOCONFIG /INPUTCHARSET UTF8 /DVC_redist_ver=%VC_redist_ver% installer\installer.nsi'
+  - '"C:\Program Files (x86)\NSIS\Bin\makensis" /NOCD /NOCONFIG /INPUTCHARSET UTF8 /DVC_redist_path=%VC_redist_path% /DVC_redist_ver=%VC_redist_ver% installer\installer.nsi'
   - set release=%APPVEYOR_REPO_COMMIT:~0,7%
 #  - cmd
 artifacts:
