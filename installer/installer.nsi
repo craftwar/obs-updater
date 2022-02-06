@@ -23,7 +23,8 @@ Section "OBS Studio"
 	ExecWait '"$INSTDIR\vc_redist.x86.exe" /norestart'
 	ExecWait '"$INSTDIR\vc_redist.x64.exe" /norestart'
 ; use cmd.exe /C workaround to pin cmd file
-	CreateShortcut "$desktop\craftwar OBS.lnk" '$INSTDIR\craftwar-obs-updater.exe' '-wc jim -gc jim'
+;	CreateShortcut "$desktop\craftwar OBS.lnk" '$INSTDIR\craftwar-obs-updater.exe' '-wc jim -gc jim'
+	CreateShortcut "$desktop\craftwar OBS.lnk" '$INSTDIR\craftwar-obs-updater.exe'
 	ExecShell "open" "https://craftwarblog.blogspot.com/2017/09/obs-studioby-craftwar.html"
 	ExecShell "open" "https://discord.gg/cAAHwu7"
 SectionEnd
